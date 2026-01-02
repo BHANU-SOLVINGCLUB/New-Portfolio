@@ -46,7 +46,7 @@ export default function About() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed">
-              I'm a passionate full-stack developer with over 5 years of
+              I&apos;m a passionate full-stack developer with over 5 years of
               experience building web applications. I specialize in creating
               modern, responsive, and user-friendly interfaces while ensuring
               robust backend architecture. My journey in tech started with a

@@ -18,7 +18,7 @@ export default function Contact() {
             <h1 className="text-3xl sm:text-4xl font-bold">Get In Touch</h1>
           </div>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground px-4">
-            I'd love to hear from you. Send me a message and I'll respond as soon as possible.
+            I&apos;d love to hear from you. Send me a message and I&apos;ll respond as soon as possible.
           </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function Contact() {
             <CardHeader>
               <CardTitle>Send a Message</CardTitle>
               <CardDescription>
-                Fill out the form below and I'll get back to you
+                Fill out the form below and I&apos;ll get back to you
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -138,7 +138,7 @@ export default function Contact() {
             <Card>
               <CardHeader>
                 <CardTitle>Availability</CardTitle>
-                <CardDescription>When I'm available for work</CardDescription>
+                <CardDescription>When I&apos;m available for work</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">

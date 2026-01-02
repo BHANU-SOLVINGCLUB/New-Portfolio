@@ -21,7 +21,7 @@ export default function Home() {
               <Badge>Mobile Developer</Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Hi, I'm John Doe
+              Hi, I&apos;m John Doe
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6">
               I build beautiful, functional web and mobile applications with modern

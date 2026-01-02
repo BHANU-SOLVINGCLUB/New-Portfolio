@@ -70,7 +70,7 @@ export default function Projects() {
           <h1 className="text-3xl sm:text-4xl font-bold">My Projects</h1>
         </div>
         <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
-          A collection of projects I've built and contributed to
+          A collection of projects I&apos;ve built and contributed to
         </p>
       </div>
 
