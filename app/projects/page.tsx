@@ -56,29 +56,30 @@ export default function Projects() {
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
-          <Card key={project.id} className="flex flex-col">
+          <Card key={project.id} className="flex flex-col group hover:border-primary/50 transition-colors">
             <CardHeader>
-              <CardTitle>{project.title}</CardTitle>
-              <CardDescription>{project.description}</CardDescription>
+              <div className="flex items-start justify-between mb-2">
+                <CardTitle className="group-hover:text-primary transition-colors">{project.title}</CardTitle>
+              </div>
+              <CardDescription className="line-clamp-2">{project.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className="flex flex-wrap gap-2">
                 {project.technologies.map((tech) => (
-                  <Badge key={tech} variant="secondary">
+                  <Badge key={tech} variant="secondary" className="text-xs">
                     {tech}
                   </Badge>
                 ))}
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col sm:flex-row gap-2">
+            <CardFooter className="flex items-center gap-2">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="flex-1 w-full sm:w-auto">
+                  <Button variant="outline" className="flex-1 sm:flex-initial">
                     <Eye className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">View Details</span>
-                    <span className="sm:hidden">Details</span>
+                    View Details
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-[90vw] sm:max-w-lg">
@@ -103,38 +104,34 @@ export default function Projects() {
                   </div>
                 </DialogContent>
               </Dialog>
-              <div className="flex gap-2 w-full sm:w-auto">
+              <div className="flex gap-2">
                 {project.github && (
                   <Button 
                     variant="outline" 
-                    className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
+                    size="icon"
                     asChild
                   >
                     <a 
                       href={project.github} 
                       target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                      rel="noopener noreferrer"
                     >
-                      <Github className="h-4 w-4 flex-shrink-0" />
-                      <span className="sm:hidden font-medium">GitHub</span>
+                      <Github className="h-4 w-4" />
                     </a>
                   </Button>
                 )}
                 {project.live && (
                   <Button 
                     variant="outline" 
-                    className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
+                    size="icon"
                     asChild
                   >
                     <a 
                       href={project.live} 
                       target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                      rel="noopener noreferrer"
                     >
-                      <ExternalLink className="h-4 w-4 flex-shrink-0" />
-                      <span className="sm:hidden font-medium">Live</span>
+                      <ExternalLink className="h-4 w-4" />
                     </a>
                   </Button>
                 )}

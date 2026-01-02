@@ -3,14 +3,14 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
 
-// Memoji-style gradient colors
+// Grey-based gradient colors (shadcn style)
 const memojiGradients = [
-  "from-blue-400 via-purple-400 to-pink-400",
-  "from-cyan-400 via-blue-500 to-indigo-500",
-  "from-emerald-400 via-teal-400 to-cyan-400",
-  "from-orange-400 via-pink-400 to-rose-400",
-  "from-violet-400 via-purple-400 to-fuchsia-400",
-  "from-yellow-400 via-orange-400 to-red-400",
+  "from-slate-600 via-slate-500 to-slate-400",
+  "from-zinc-600 via-zinc-500 to-zinc-400",
+  "from-neutral-600 via-neutral-500 to-neutral-400",
+  "from-stone-600 via-stone-500 to-stone-400",
+  "from-gray-600 via-gray-500 to-gray-400",
+  "from-slate-700 via-slate-600 to-slate-500",
 ]
 
 // Generate a consistent gradient based on initials
@@ -26,7 +26,7 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20 shadow-xl",
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-border",
       className
     )}
     {...props}
@@ -61,7 +61,7 @@ const AvatarFallback = React.forwardRef<
     <AvatarPrimitive.Fallback
       ref={ref}
       className={cn(
-        "flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-white font-bold text-sm sm:text-base shadow-inner",
+        "flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-foreground font-semibold text-sm sm:text-base",
         gradient,
         className
       )}

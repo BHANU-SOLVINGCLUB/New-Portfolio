@@ -11,7 +11,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-            <Avatar className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 ring-4 ring-white/10">
+            <Avatar className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 ring-2 ring-border">
             <AvatarImage src="/avatar.svg" alt="Bhanu Prakash Chintal" />
             <AvatarFallback className="text-lg sm:text-xl md:text-2xl">BPC</AvatarFallback>
           </Avatar>
@@ -48,51 +48,62 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 bg-muted/50">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">What I Do</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          <Card>
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 border-t border-border">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">What I Do</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Specialized in data analytics, mobile development, and full-stack solutions
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="group hover:border-primary/50 transition-colors">
             <CardHeader>
-              <Code className="h-8 w-8 mb-2" />
+              <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                <Code className="h-6 w-6 text-primary" />
+              </div>
               <CardTitle>Data Analytics</CardTitle>
               <CardDescription>
                 Python-based data analysis, visualization, and automation
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Extracting insights from data, building KPI dashboards, and creating 
                 interactive visualizations using Python, pandas, and Streamlit.
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="group hover:border-primary/50 transition-colors">
             <CardHeader>
-              <Briefcase className="h-8 w-8 mb-2" />
+              <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                <Briefcase className="h-6 w-6 text-primary" />
+              </div>
               <CardTitle>Mobile Development</CardTitle>
               <CardDescription>
                 Building scalable Flutter applications with clean architecture
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Developing cross-platform mobile apps using Flutter, Dart, and 
                 implementing modular architecture for scalable solutions.
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="group hover:border-primary/50 transition-colors">
             <CardHeader>
-              <Mail className="h-8 w-8 mb-2" />
+              <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                <Mail className="h-6 w-6 text-primary" />
+              </div>
               <CardTitle>Full Stack Development</CardTitle>
               <CardDescription>
                 End-to-end web applications with modern technologies
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Building complete web solutions using Next.js, TypeScript, and 
                 integrating with Firebase, Supabase, and REST APIs.
               </p>
@@ -102,27 +113,35 @@ export default function Home() {
       </section>
 
       {/* Quick Stats */}
-      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
-          <div>
-            <FolderKanban className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-4 text-primary" />
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">3+</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Years Experience</p>
+      <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 border-t border-border">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="flex flex-col items-center text-center">
+            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+              <FolderKanban className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">3+</div>
+            <p className="text-sm text-muted-foreground">Years Experience</p>
           </div>
-          <div>
-            <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-4 text-primary" />
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">10+</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Projects Completed</p>
+          <div className="flex flex-col items-center text-center">
+            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+              <TrendingUp className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">10+</div>
+            <p className="text-sm text-muted-foreground">Projects Completed</p>
           </div>
-          <div>
-            <Users className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-4 text-primary" />
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">2</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Companies Worked</p>
+          <div className="flex flex-col items-center text-center">
+            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">2</div>
+            <p className="text-sm text-muted-foreground">Companies Worked</p>
           </div>
-          <div>
-            <Award className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-4 text-primary" />
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">1</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">Research Paper</p>
+          <div className="flex flex-col items-center text-center">
+            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+              <Award className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">1</div>
+            <p className="text-sm text-muted-foreground">Research Paper</p>
           </div>
         </div>
       </section>

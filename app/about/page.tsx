@@ -22,35 +22,35 @@ export default function About() {
         </div>
 
         {/* Profile Card */}
-        <Card className="mb-6 sm:mb-8">
+        <Card className="mb-6 sm:mb-8 border-border">
           <CardHeader>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-white/10">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-border">
                 <AvatarImage src="/avatar.svg" alt="Bhanu Prakash Chintal" />
                 <AvatarFallback className="text-base sm:text-lg">BPC</AvatarFallback>
               </Avatar>
-              <div className="text-center sm:text-left">
+              <div className="text-center sm:text-left flex-1">
                 <CardTitle className="text-2xl sm:text-3xl mb-2">Bhanu Prakash Chintal</CardTitle>
                 <CardDescription className="text-sm sm:text-base mb-4">
                   Data Analyst | Software Engineer | Flutter Developer
                 </CardDescription>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <Badge>Python</Badge>
-                  <Badge>Flutter</Badge>
-                  <Badge>Next.js</Badge>
-                  <Badge>TypeScript</Badge>
-                  <Badge>Data Analytics</Badge>
+                  <Badge variant="secondary">Python</Badge>
+                  <Badge variant="secondary">Flutter</Badge>
+                  <Badge variant="secondary">Next.js</Badge>
+                  <Badge variant="secondary">TypeScript</Badge>
+                  <Badge variant="secondary">Data Analytics</Badge>
                 </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
               Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, 
               visualization, and automation, along with strong Flutter and full-stack development skills. 
               Experienced in end-to-end product development, clean architecture, and cross-team collaboration.
             </p>
-            <p className="text-muted-foreground leading-relaxed mt-4">
+            <p className="text-muted-foreground leading-relaxed">
               I enjoy building scalable applications, extracting insights from data, and solving real-world 
               problems using technology.
             </p>
