@@ -7,57 +7,39 @@ import { ExternalLink, Github, FolderKanban, Eye } from "lucide-react";
 const projects = [
   {
     id: 1,
-    title: "E-Commerce Platform",
-    description: "A full-featured e-commerce platform with payment integration, user authentication, and admin dashboard.",
-    technologies: ["Next.js", "TypeScript", "Stripe", "Prisma"],
+    title: "TUVO – Ticket Booking Platform",
+    description: "Full-stack Next.js 15 ticket booking platform with secure PayU payments, PDF ticket generation, and role-based admin dashboard.",
+    technologies: ["Next.js", "TypeScript", "Tailwind", "Radix UI", "Supabase", "Vercel"],
     image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
+    github: "",
+    live: "https://www.tuvo.in/",
+    type: "Freelance Project",
+    period: "June 2025",
+    details: "Built a full-stack ticket booking platform with secure PayU payments and server verification. Implemented PDF ticket generation with QR codes and automated email receipts. Developed a comprehensive role-based admin dashboard for managing events and bookings."
   },
   {
     id: 2,
-    title: "Task Management App",
-    description: "A collaborative task management application with real-time updates and team collaboration features.",
-    technologies: ["React", "Node.js", "Socket.io", "MongoDB"],
+    title: "Data Analytics & Visualization Studio",
+    description: "Streamlit-based analytics platform for CSV/XLSX datasets with automatic schema detection, interactive dashboards, and KPI visualization.",
+    technologies: ["Python", "Streamlit", "pandas", "Plotly", "NumPy"],
     image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
+    github: "https://github.com/JadhavMeghana/Data-Analytics---Visualization-Studio",
+    live: "https://dav-studio.streamlit.app/",
+    type: "Personal Project",
+    period: "Aug 2025",
+    details: "Built a comprehensive Streamlit-based analytics platform that automatically detects schemas and column mappings. Delivers end-to-end data analysis including trends, distributions, and outlier detection. Features interactive dashboards with KPIs and advanced filtering capabilities."
   },
   {
     id: 3,
-    title: "Social Media Dashboard",
-    description: "Analytics dashboard for social media metrics with data visualization and reporting features.",
-    technologies: ["Vue.js", "Python", "Django", "Chart.js"],
+    title: "Travel Together",
+    description: "Smart travel app with AI-powered itinerary planning, real-time geolocation navigation, and intuitive UI with admin panel.",
+    technologies: ["Flutter", "Dart", "Firebase", "Firestore", "AI Integration"],
     image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
-  },
-  {
-    id: 4,
-    title: "Weather App",
-    description: "Beautiful weather application with location-based forecasts and interactive maps.",
-    technologies: ["React", "OpenWeather API", "Tailwind CSS"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
-  },
-  {
-    id: 5,
-    title: "Blog Platform",
-    description: "Modern blog platform with markdown support, syntax highlighting, and SEO optimization.",
-    technologies: ["Next.js", "MDX", "Tailwind CSS", "Vercel"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
-  },
-  {
-    id: 6,
-    title: "Portfolio Website",
-    description: "A responsive portfolio website showcasing projects and skills with smooth animations.",
-    technologies: ["Next.js", "Framer Motion", "TypeScript"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com",
-    live: "https://example.com",
+    github: "https://github.com/BhanuPrakashChintal/TravelTogether",
+    live: "",
+    type: "Freelancing Project",
+    period: "May 2024 – Jun 2024",
+    details: "Developed a smart travel application featuring AI-powered itinerary planning and real-time geolocation navigation. Designed an intuitive user interface with a comprehensive admin panel. Utilized Firebase for secure backend and efficient data handling."
   },
 ];
 
@@ -105,6 +87,10 @@ export default function Projects() {
                     <DialogDescription className="text-sm sm:text-base">{project.description}</DialogDescription>
                   </DialogHeader>
                   <div className="py-4">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.type && <Badge variant="secondary" className="text-xs sm:text-sm">{project.type}</Badge>}
+                      {project.period && <Badge variant="outline" className="text-xs sm:text-sm">{project.period}</Badge>}
+                    </div>
                     <h4 className="font-semibold mb-2 text-sm sm:text-base">Technologies Used:</h4>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.technologies.map((tech) => (
@@ -112,45 +98,46 @@ export default function Projects() {
                       ))}
                     </div>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      This project demonstrates my skills in building scalable
-                      web applications with modern technologies. It includes
-                      features like user authentication, data management, and
-                      responsive design.
+                      {project.details || project.description}
                     </p>
                   </div>
                 </DialogContent>
               </Dialog>
               <div className="flex gap-2 w-full sm:w-auto">
-                <Button 
-                  variant="outline" 
-                  className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
-                  asChild
-                >
-                  <a 
-                    href={project.github} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                {project.github && (
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
+                    asChild
                   >
-                    <Github className="h-4 w-4 flex-shrink-0" />
-                    <span className="sm:hidden font-medium">GitHub</span>
-                  </a>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
-                  asChild
-                >
-                  <a 
-                    href={project.live} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                    <a 
+                      href={project.github} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                    >
+                      <Github className="h-4 w-4 flex-shrink-0" />
+                      <span className="sm:hidden font-medium">GitHub</span>
+                    </a>
+                  </Button>
+                )}
+                {project.live && (
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 sm:flex-initial sm:h-10 sm:w-10 sm:px-0" 
+                    asChild
                   >
-                    <ExternalLink className="h-4 w-4 flex-shrink-0" />
-                    <span className="sm:hidden font-medium">Live</span>
-                  </a>
-                </Button>
+                    <a 
+                      href={project.live} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="flex items-center justify-center gap-2 sm:gap-0 w-full sm:w-auto"
+                    >
+                      <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                      <span className="sm:hidden font-medium">Live</span>
+                    </a>
+                  </Button>
+                )}
               </div>
             </CardFooter>
           </Card>

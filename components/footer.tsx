@@ -11,17 +11,16 @@ export function Footer() {
             © {new Date().getFullYear()} Developer Portfolio. All rights reserved.
           </p>
           <div className="flex gap-3 sm:gap-4">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
+            <a href="https://github.com/bhanuprakashchintal" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
               <Github className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="text-xs sm:text-sm hidden sm:inline">GitHub</span>
             </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
+            <a href="https://www.linkedin.com/in/bhanuprakashchintal/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
               <Linkedin className="h-4 w-4 sm:h-5 sm:w-5" />
               <span className="text-xs sm:text-sm hidden sm:inline">LinkedIn</span>
             </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
-              <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-xs sm:text-sm hidden sm:inline">Twitter</span>
+            <a href="https://bhanuprakashchintal.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm hidden sm:inline">Portfolio</span>
             </a>
           </div>
         </div>

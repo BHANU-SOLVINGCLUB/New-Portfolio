@@ -5,38 +5,44 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Palette, Server, Database, Wrench, Sparkles, Code } from "lucide-react";
 
-const frontendSkills = [
-  { name: "React", level: 90 },
-  { name: "Next.js", level: 85 },
-  { name: "TypeScript", level: 88 },
-  { name: "JavaScript", level: 92 },
-  { name: "HTML/CSS", level: 95 },
-  { name: "Tailwind CSS", level: 90 },
+const dataAnalyticsSkills = [
+  { name: "Python", level: 85 },
+  { name: "pandas", level: 80 },
+  { name: "NumPy", level: 75 },
+  { name: "Data Cleaning & Analysis", level: 85 },
+  { name: "Data Visualization", level: 80 },
+  { name: "KPI Dashboards", level: 75 },
 ];
 
-const backendSkills = [
-  { name: "Node.js", level: 85 },
-  { name: "Python", level: 80 },
-  { name: "Express.js", level: 88 },
-  { name: "Django", level: 75 },
-  { name: "REST APIs", level: 90 },
-  { name: "GraphQL", level: 70 },
+const visualizationSkills = [
+  { name: "Streamlit", level: 85 },
+  { name: "Plotly", level: 80 },
+];
+
+const appDevSkills = [
+  { name: "Flutter", level: 88 },
+  { name: "Dart", level: 85 },
+  { name: "REST APIs", level: 80 },
+  { name: "Firebase", level: 85 },
+  { name: "Supabase", level: 75 },
+  { name: "Next.js", level: 80 },
+  { name: "TypeScript", level: 75 },
 ];
 
 const databaseSkills = [
-  { name: "PostgreSQL", level: 85 },
-  { name: "MongoDB", level: 80 },
-  { name: "MySQL", level: 75 },
-  { name: "Redis", level: 70 },
-  { name: "Prisma", level: 82 },
+  { name: "Firestore", level: 85 },
+  { name: "Supabase", level: 75 },
+  { name: "SQL (Basics)", level: 70 },
+  { name: "Oracle / PL-SQL", level: 60 },
 ];
 
 const toolsSkills = [
-  { name: "Git", level: 90 },
-  { name: "Docker", level: 75 },
-  { name: "AWS", level: 70 },
-  { name: "CI/CD", level: 80 },
-  { name: "Linux", level: 85 },
+  { name: "Git & GitHub", level: 85 },
+  { name: "Modular Architecture", level: 80 },
+  { name: "Debugging & Performance", level: 80 },
+  { name: "Automation", level: 75 },
+  { name: "Notion", level: 85 },
+  { name: "AI-assisted Development", level: 80 },
 ];
 
 const SkillCard = ({ name, level }: { name: string; level: number }) => (
@@ -63,17 +69,22 @@ export default function Skills() {
           </p>
         </div>
 
-        <Tabs defaultValue="frontend" className="mb-6 sm:mb-8">
-          <TabsList className="grid w-full grid-cols-4 h-auto">
-            <TabsTrigger value="frontend" className="text-xs sm:text-sm">
-              <Palette className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Frontend</span>
-              <span className="sm:hidden">FE</span>
+        <Tabs defaultValue="data" className="mb-6 sm:mb-8">
+          <TabsList className="grid w-full grid-cols-5 h-auto">
+            <TabsTrigger value="data" className="text-xs sm:text-sm">
+              <Database className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Data</span>
+              <span className="sm:hidden">Data</span>
             </TabsTrigger>
-            <TabsTrigger value="backend" className="text-xs sm:text-sm">
-              <Server className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Backend</span>
-              <span className="sm:hidden">BE</span>
+            <TabsTrigger value="visualization" className="text-xs sm:text-sm">
+              <Palette className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Viz</span>
+              <span className="sm:hidden">Viz</span>
+            </TabsTrigger>
+            <TabsTrigger value="appdev" className="text-xs sm:text-sm">
+              <Code className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">App Dev</span>
+              <span className="sm:hidden">App</span>
             </TabsTrigger>
             <TabsTrigger value="database" className="text-xs sm:text-sm">
               <Database className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -87,32 +98,48 @@ export default function Skills() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="frontend" className="mt-6">
+          <TabsContent value="data" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Frontend Technologies</CardTitle>
+                <CardTitle>Data & Analytics</CardTitle>
                 <CardDescription>
-                  Modern frontend frameworks and libraries
+                  Python-based data analysis and processing
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {frontendSkills.map((skill) => (
+                {dataAnalyticsSkills.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="backend" className="mt-6">
+          <TabsContent value="visualization" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Backend Technologies</CardTitle>
+                <CardTitle>Visualization Tools</CardTitle>
                 <CardDescription>
-                  Server-side development and APIs
+                  Interactive dashboards and data visualization
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {backendSkills.map((skill) => (
+                {visualizationSkills.map((skill) => (
+                  <SkillCard key={skill.name} name={skill.name} level={skill.level} />
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="appdev" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>App & Backend Development</CardTitle>
+                <CardDescription>
+                  Mobile and web application development
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {appDevSkills.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
@@ -165,16 +192,14 @@ export default function Skills() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              <Badge>UI/UX Design</Badge>
-              <Badge>Responsive Design</Badge>
+              <Badge>Modular Architecture</Badge>
+              <Badge>Clean Code</Badge>
               <Badge>Performance Optimization</Badge>
-              <Badge>SEO</Badge>
-              <Badge>Testing</Badge>
-              <Badge>Agile/Scrum</Badge>
-              <Badge>Code Review</Badge>
-              <Badge>Technical Writing</Badge>
-              <Badge>Mentoring</Badge>
-              <Badge>Project Management</Badge>
+              <Badge>Debugging</Badge>
+              <Badge>Automation</Badge>
+              <Badge>API Documentation</Badge>
+              <Badge>End-to-end Development</Badge>
+              <Badge>Cross-team Collaboration</Badge>
             </div>
           </CardContent>
         </Card>

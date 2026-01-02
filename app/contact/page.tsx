@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Phone, MapPin, Linkedin, Github, Twitter, Send, Clock, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Github, Twitter, Send, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 
 export default function Contact() {
   return (
@@ -78,7 +78,7 @@ export default function Contact() {
                   <div>
                     <p className="text-sm font-medium">Email</p>
                     <p className="text-sm text-muted-foreground">
-                      john.doe@example.com
+                      chintalbhanuprakash30oct@gmail.com
                     </p>
                   </div>
                 </div>
@@ -90,7 +90,7 @@ export default function Contact() {
                   <div>
                     <p className="text-sm font-medium">Phone</p>
                     <p className="text-sm text-muted-foreground">
-                      +1 (555) 123-4567
+                      +91 6304725752
                     </p>
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function Contact() {
                   <div>
                     <p className="text-sm font-medium">Location</p>
                     <p className="text-sm text-muted-foreground">
-                      San Francisco, CA
+                      Hyderabad, Telangana, India
                     </p>
                   </div>
                 </div>
@@ -117,18 +117,18 @@ export default function Contact() {
               <CardContent>
                 <div className="flex gap-4">
                   <Button variant="outline" size="icon" asChild>
-                    <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                    <a href="https://github.com/bhanuprakashchintal" target="_blank" rel="noopener noreferrer">
                       <Github className="h-4 w-4" />
                     </a>
                   </Button>
                   <Button variant="outline" size="icon" asChild>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.linkedin.com/in/bhanuprakashchintal/" target="_blank" rel="noopener noreferrer">
                       <Linkedin className="h-4 w-4" />
                     </a>
                   </Button>
                   <Button variant="outline" size="icon" asChild>
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                      <Twitter className="h-4 w-4" />
+                    <a href="https://bhanuprakashchintal.vercel.app" target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
                     </a>
                   </Button>
                 </div>

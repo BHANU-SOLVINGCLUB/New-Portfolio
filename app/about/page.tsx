@@ -25,33 +25,34 @@ export default function About() {
         <Card className="mb-6 sm:mb-8">
           <CardHeader>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-              <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="Developer" />
-                <AvatarFallback>JD</AvatarFallback>
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-white/10">
+                <AvatarImage src="/avatar.svg" alt="Bhanu Prakash Chintal" />
+                <AvatarFallback className="text-base sm:text-lg">BPC</AvatarFallback>
               </Avatar>
               <div className="text-center sm:text-left">
-                <CardTitle className="text-2xl sm:text-3xl mb-2">John Doe</CardTitle>
+                <CardTitle className="text-2xl sm:text-3xl mb-2">Bhanu Prakash Chintal</CardTitle>
                 <CardDescription className="text-sm sm:text-base mb-4">
-                  Full Stack Developer & UI/UX Enthusiast
+                  Data Analyst | Software Engineer | Flutter Developer
                 </CardDescription>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <Badge>React</Badge>
+                  <Badge>Python</Badge>
+                  <Badge>Flutter</Badge>
                   <Badge>Next.js</Badge>
                   <Badge>TypeScript</Badge>
-                  <Badge>Node.js</Badge>
-                  <Badge>Python</Badge>
+                  <Badge>Data Analytics</Badge>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed">
-              I&apos;m a passionate full-stack developer with over 5 years of
-              experience building web applications. I specialize in creating
-              modern, responsive, and user-friendly interfaces while ensuring
-              robust backend architecture. My journey in tech started with a
-              curiosity about how websites work, and it has evolved into a
-              career dedicated to crafting exceptional digital experiences.
+              Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, 
+              visualization, and automation, along with strong Flutter and full-stack development skills. 
+              Experienced in end-to-end product development, clean architecture, and cross-team collaboration.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              I enjoy building scalable applications, extracting insights from data, and solving real-world 
+              problems using technology.
             </p>
           </CardContent>
         </Card>
@@ -90,20 +91,22 @@ export default function About() {
                     <div className="flex items-start gap-3">
                       <Building2 className="h-4 w-4 sm:h-5 sm:w-5 mt-1 text-primary flex-shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-base sm:text-lg">Senior Full Stack Developer</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">Tech Company Inc.</p>
+                        <h3 className="font-semibold text-base sm:text-lg">Flutter Developer (SDE)</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">Sas Estetica Solutions Pvt. Ltd.</p>
                       </div>
                     </div>
                     <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs sm:text-sm">
                       <Calendar className="h-3 w-3" />
-                      2021 - Present
+                      Oct 2025 – Present
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Leading development of scalable web applications using
-                    React, Next.js, and Node.js. Mentoring junior developers and
-                    implementing best practices.
-                  </p>
+                  <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                    <li>Building and maintaining a SaaS mobile app using Flutter, Riverpod, and REST APIs</li>
+                    <li>Implemented modular architecture and clean navigation for scalable development</li>
+                    <li>Managed internal app testing and deployment workflows</li>
+                    <li>Improved UI/UX with smooth animations, loading states, and feedback</li>
+                    <li>Created and maintained API documentation in Notion</li>
+                  </ul>
                 </div>
                 <Separator />
                 <div>
@@ -111,40 +114,22 @@ export default function About() {
                     <div className="flex items-start gap-3">
                       <Building2 className="h-4 w-4 sm:h-5 sm:w-5 mt-1 text-primary flex-shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-base sm:text-lg">Full Stack Developer</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">StartupXYZ</p>
+                        <h3 className="font-semibold text-base sm:text-lg">Flutter Developer Intern (SDE)</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">CyberMyte Technology Solutions</p>
                       </div>
                     </div>
                     <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs sm:text-sm">
                       <Calendar className="h-3 w-3" />
-                      2019 - 2021
+                      Oct 2024 – Apr 2025
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Developed and maintained multiple client projects. Worked
-                    with various technologies including Python, Django, and
-                    React.
-                  </p>
-                </div>
-                <Separator />
-                <div>
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
-                    <div className="flex items-start gap-3">
-                      <Building2 className="h-4 w-4 sm:h-5 sm:w-5 mt-1 text-primary flex-shrink-0" />
-                      <div>
-                        <h3 className="font-semibold text-base sm:text-lg">Junior Developer</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">Web Agency</p>
-                      </div>
-                    </div>
-                    <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs sm:text-sm">
-                      <Calendar className="h-3 w-3" />
-                      2018 - 2019
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Started my career building websites and learning modern web
-                    development practices.
-                  </p>
+                  <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                    <li>Developed and optimized a Flutter IoT application</li>
+                    <li>Implemented authentication and Firebase integration</li>
+                    <li>Built metrics dashboards with charts</li>
+                    <li>Improved backend logic and overall app performance</li>
+                    <li>Worked extensively with Firestore and Realtime Database</li>
+                  </ul>
                 </div>
               </CardContent>
             </Card>
@@ -162,18 +147,36 @@ export default function About() {
                     <div className="flex items-start gap-3">
                       <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 mt-1 text-primary flex-shrink-0" />
                       <div>
-                        <h3 className="font-semibold text-base sm:text-lg">Bachelor of Science in Computer Science</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">University Name</p>
+                        <h3 className="font-semibold text-base sm:text-lg">Bachelor of Technology – Information Technology</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">Anurag University</p>
                       </div>
                     </div>
                     <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs sm:text-sm">
                       <Calendar className="h-3 w-3" />
-                      2014 - 2018
+                      Sep 2021 – Apr 2025
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Focused on software engineering, algorithms, and web
-                    development. Graduated with honors.
+                    <strong>CGPA:</strong> 8.22 / 10
+                  </p>
+                </div>
+                <Separator />
+                <div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
+                    <div className="flex items-start gap-3">
+                      <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 mt-1 text-primary flex-shrink-0" />
+                      <div>
+                        <h3 className="font-semibold text-base sm:text-lg">Intermediate – MPC</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">Sri Chaitanya Junior Kalasala (TSBIE)</p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="flex items-center gap-1 w-fit text-xs sm:text-sm">
+                      <Calendar className="h-3 w-3" />
+                      Jun 2019 – Mar 2021
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Percentage:</strong> 91.8%
                   </p>
                 </div>
                 <Separator />
@@ -184,9 +187,8 @@ export default function About() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Badge>AWS Certified Developer</Badge>
-                    <Badge>React Advanced Patterns</Badge>
-                    <Badge>Node.js Best Practices</Badge>
+                    <Badge>CISCO NetAcad – Python 1 & 2</Badge>
+                    <Badge>AWS Academy Graduate – Cloud Foundations</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -203,34 +205,49 @@ export default function About() {
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="item-1">
                     <AccordionTrigger className="flex items-center gap-2">
-                      <Code2 className="h-4 w-4 text-primary" />
-                      Open Source Contributor
+                      <Trophy className="h-4 w-4 text-primary" />
+                      Scholarships & Awards
                     </AccordionTrigger>
                     <AccordionContent>
-                      Contributed to multiple open-source projects with over
-                      1000+ stars combined. Maintained several popular npm
-                      packages.
+                      <ul className="list-disc list-inside space-y-1 text-sm">
+                        <li>Telangana State Post Matric Scholarship (TS EAMCET) – 4 years</li>
+                        <li>First Prize – Heritage Hues Project, University Expo (2024)</li>
+                      </ul>
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-2">
                     <AccordionTrigger className="flex items-center gap-2">
-                      <Mic className="h-4 w-4 text-primary" />
-                      Tech Speaker
+                      <Code2 className="h-4 w-4 text-primary" />
+                      Leadership & Community
                     </AccordionTrigger>
                     <AccordionContent>
-                      Spoke at 5+ tech conferences and meetups about modern web
-                      development practices and React best practices.
+                      <ul className="list-disc list-inside space-y-1 text-sm">
+                        <li>Led CodeChef Chapter at university</li>
+                        <li>Technical Team Member – GeeksforGeeks Student Club</li>
+                        <li>Organizer – iTechnoz Technical Club events & hackathons</li>
+                      </ul>
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
                     <AccordionTrigger className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-primary" />
-                      Published Articles
+                      Research Publication
                     </AccordionTrigger>
                     <AccordionContent>
-                      Written 20+ technical articles on Medium and Dev.to with
-                      over 50k total views, sharing knowledge about web
-                      development.
+                      <p className="text-sm mb-2">
+                        <strong>Decentralized Cloud Storage using Blockchain & IPFS</strong>
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Published at Anurag University (Apr 2025)
+                      </p>
+                      <a 
+                        href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5142864" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        View Published Paper →
+                      </a>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

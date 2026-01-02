@@ -7,8 +7,8 @@ import { Footer } from "@/components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Developer Portfolio",
-  description: "A modern developer portfolio built with Next.js and shadcn/ui",
+  title: "Bhanu Prakash Chintal | Data Analyst | Software Engineer | Flutter Developer",
+  description: "Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, visualization, and automation, along with strong Flutter and full-stack development skills.",
 };
 
 export default function RootLayout({
