@@ -112,7 +112,7 @@ export function ProjectsEditor({ projects, onSave }: ProjectsEditorProps) {
           <div className="space-y-4">
             {localProjects.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
-                No projects yet. Click "Add Project" to get started.
+                No projects yet. Click &quot;Add Project&quot; to get started.
               </p>
             ) : (
               localProjects.map((project) => (
