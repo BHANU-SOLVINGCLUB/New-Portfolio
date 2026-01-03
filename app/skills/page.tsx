@@ -19,8 +19,21 @@ const SkillCard = ({ name, level }: { name: string; level: number }) => (
   </div>
 );
 
+interface Skill {
+  name: string;
+  level: number;
+}
+
+interface SkillsData {
+  dataAnalytics: Skill[];
+  visualization: Skill[];
+  appDev: Skill[];
+  database: Skill[];
+  tools: Skill[];
+}
+
 export default function Skills() {
-  const [skills, setSkills] = useState({
+  const [skills, setSkills] = useState<SkillsData>({
     dataAnalytics: [],
     visualization: [],
     appDev: [],

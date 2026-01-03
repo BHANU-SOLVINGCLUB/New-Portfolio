@@ -7,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Save, Plus, Trash2 } from "lucide-react";
 
-interface Skill {
+export interface Skill {
   name: string;
   level: number;
 }
 
-interface SkillsData {
+export interface SkillsData {
   dataAnalytics: Skill[];
   visualization: Skill[];
   appDev: Skill[];
@@ -78,7 +78,7 @@ export function SkillsEditor({ skills, onSave }: SkillsEditorProps) {
               <h3 className="font-semibold capitalize">{category.replace(/([A-Z])/g, " $1").trim()}</h3>
               <Separator />
               <div className="space-y-3">
-                {skillList.map((skill, index) => (
+                {(skillList as Skill[]).map((skill: Skill, index: number) => (
                   <div key={index} className="flex gap-2 items-center">
                     <Input
                       value={skill.name}
