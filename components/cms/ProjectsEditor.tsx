@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Save, Trash2, Edit, X } from "lucide-react";
+import { Plus, Save, Trash2, Edit, X, ExternalLink, Upload, Image as ImageIcon } from "lucide-react";
 import type { Project, ProjectCategory } from "@/lib/portfolio-data";
 
 interface ProjectsEditorProps {
@@ -118,12 +118,26 @@ export function ProjectsEditor({ projects, onSave }: ProjectsEditorProps) {
               localProjects.map((project) => (
                 <div key={project.id} className="border rounded-lg p-4 space-y-2">
                   <div className="flex justify-between items-start">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold">{project.title || "Untitled Project"}</h3>
                       <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge variant="secondary">{project.category}</Badge>
                         {project.featured && <Badge>Featured</Badge>}
+                        {project.category === "web" && project.live && (
+                          <Badge variant="outline" className="gap-1">
+                            <ExternalLink className="h-3 w-3" />
+                            <a
+                              href={project.live}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="hover:underline"
+                            >
+                              Live Preview
+                            </a>
+                          </Badge>
+                        )}
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -165,12 +179,49 @@ function ProjectForm({
   onCancel: () => void;
 }) {
   const [techInput, setTechInput] = useState(project.technologies.join(", "));
+  const [imagePreview, setImagePreview] = useState<string | null>(project.image && project.image.startsWith("data:") ? project.image : null);
 
   const handleTechChange = (value: string) => {
     setTechInput(value);
     setProject({
       ...project,
       technologies: value.split(",").map((t) => t.trim()).filter((t) => t),
+    });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload an image file");
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setImagePreview(base64String);
+        setProject({
+          ...project,
+          image: base64String,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+    setProject({
+      ...project,
+      image: "/placeholder-project.jpg",
     });
   };
 
@@ -281,14 +332,93 @@ function ProjectForm({
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="project-live">Live URL</Label>
-          <Input
-            id="project-live"
-            value={project.live}
-            onChange={(e) => setProject({ ...project, live: e.target.value })}
-            placeholder="https://..."
-          />
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="project-image">Project Preview Image</Label>
+          <div className="space-y-2">
+            {imagePreview || (project.image && project.image.startsWith("data:")) ? (
+              <div className="relative border rounded-lg p-2">
+                <img
+                  src={imagePreview || project.image}
+                  alt="Preview"
+                  className="w-full h-48 object-contain rounded-md"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleRemoveImage}
+                  className="absolute top-4 right-4"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                <ImageIcon className="h-12 w-12 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground mb-2">No image uploaded</p>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Input
+                id="project-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById("project-image")?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload Image
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Upload an image to show in the mockup. If both image and live URL are provided, image will be prioritized.
+            </p>
+          </div>
+        </div>
+
+        <div className={`space-y-2 ${project.category === "web" ? "md:col-span-2" : ""}`}>
+          <Label htmlFor="project-live" className="flex items-center gap-2">
+            Live Preview URL
+            {project.category === "web" && (
+              <Badge variant="outline" className="text-xs">Web Projects</Badge>
+            )}
+          </Label>
+          <div className="flex gap-2">
+            <Input
+              id="project-live"
+              value={project.live}
+              onChange={(e) => setProject({ ...project, live: e.target.value })}
+              placeholder="https://tuvo.in"
+              className={project.category === "web" ? "flex-1" : ""}
+            />
+            {project.live && (
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                className="flex-shrink-0"
+              >
+                <a
+                  href={project.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Open in new tab"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            )}
+          </div>
+          {project.category === "web" && project.live && (
+            <p className="text-xs text-muted-foreground">
+              This URL will be displayed in the project mockup preview if no image is uploaded. Make sure the website allows iframe embedding or a screenshot will be shown instead.
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">

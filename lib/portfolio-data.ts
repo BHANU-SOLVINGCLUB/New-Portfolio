@@ -30,7 +30,7 @@ export const defaultProjects: Project[] = [
     technologies: ["Next.js", "TypeScript", "Tailwind", "Radix UI", "Supabase", "Vercel"],
     image: "/placeholder-project.jpg",
     github: "",
-    live: "https://www.tuvo.in/",
+    live: "https://tuvo.in/",
     type: "Freelance Project",
     period: "June 2025",
     team: "1",

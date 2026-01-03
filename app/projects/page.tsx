@@ -159,11 +159,75 @@ export default function Projects() {
                         </div>
                       </div>
                       {/* Laptop Screen */}
-                      <div className="bg-muted aspect-[16/10] flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
-                        <div className="text-center w-full">
-                          <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold mb-1 sm:mb-2 line-clamp-2">{project.title}</div>
-                          <div className="text-[8px] sm:text-[10px] md:text-xs text-muted-foreground">Project Preview</div>
-                        </div>
+                      <div className="bg-muted aspect-[16/10] overflow-hidden rounded-b-lg relative group">
+                        {project.image && project.image !== "/placeholder-project.jpg" && project.image.startsWith("data:") ? (
+                          <>
+                            <img
+                              src={project.image}
+                              alt={`${project.title} Preview`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            {project.live && (
+                              <a
+                                href={project.live}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="absolute inset-0 flex items-center justify-center bg-background/90 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
+                              >
+                                <div className="text-center p-4">
+                                  <ExternalLink className="h-8 w-8 mx-auto mb-2 text-primary group-hover:scale-110 transition-transform" />
+                                  <div className="text-sm font-semibold">View Live Site</div>
+                                  <div className="text-xs text-muted-foreground mt-1">{project.live.replace(/^https?:\/\//, '').replace(/\/$/, '')}</div>
+                                </div>
+                              </a>
+                            )}
+                          </>
+                        ) : project.live ? (
+                          <>
+                            <iframe
+                              src={project.live}
+                              className="w-full h-full border-0"
+                              title={`${project.title} Preview`}
+                              loading="lazy"
+                              sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation"
+                              referrerPolicy="no-referrer-when-downgrade"
+                              style={{ transform: "scale(0.8)", transformOrigin: "top left", width: "125%", height: "125%" }}
+                              onError={() => {
+                                // Fallback handled by overlay
+                              }}
+                            />
+                            {/* Screenshot fallback using screenshot service */}
+                            <img
+                              src={`https://image.thum.io/get/width/1280/crop/800/${encodeURIComponent(project.live)}`}
+                              alt={`${project.title} Preview`}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                            <a
+                              href={project.live}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="absolute inset-0 flex items-center justify-center bg-background/90 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
+                            >
+                              <div className="text-center p-4">
+                                <ExternalLink className="h-8 w-8 mx-auto mb-2 text-primary group-hover:scale-110 transition-transform" />
+                                <div className="text-sm font-semibold">View Live Site</div>
+                                <div className="text-xs text-muted-foreground mt-1">{project.live.replace(/^https?:\/\//, '').replace(/\/$/, '')}</div>
+                              </div>
+                            </a>
+                          </>
+                        ) : (
+                          <div className="flex items-center justify-center h-full p-2 sm:p-3 md:p-4 lg:p-6">
+                            <div className="text-center w-full">
+                              <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold mb-1 sm:mb-2 line-clamp-2">{project.title}</div>
+                              <div className="text-[8px] sm:text-[10px] md:text-xs text-muted-foreground">Project Preview</div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       {/* Laptop Base */}
                       <div className="bg-card h-1 sm:h-2 md:h-3 rounded-b-lg border-t border-border"></div>

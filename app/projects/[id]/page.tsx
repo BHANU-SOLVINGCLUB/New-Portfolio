@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,138 +8,55 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, ExternalLink, Github, Calendar, Users, Award, Smartphone } from "lucide-react";
 import Link from "next/link";
-
-// Import projects data - in a real app, you might fetch this from an API
-const projects = [
-  {
-    id: 1,
-    title: "TUVO – Ticket Booking Platform",
-    description: "Full-stack Next.js 15 ticket booking platform with secure PayU payments, PDF ticket generation, and role-based admin dashboard.",
-    technologies: ["Next.js", "TypeScript", "Tailwind", "Radix UI", "Supabase", "Vercel"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "https://www.tuvo.in/",
-    type: "Freelance Project",
-    period: "June 2025",
-    team: "1",
-    achievement: null,
-    category: "web" as const,
-    details: "Built a full-stack ticket booking platform with secure PayU payments and server verification. Implemented PDF ticket generation with QR codes and automated email receipts. Developed a comprehensive role-based admin dashboard for managing events and bookings.",
-    featured: true
-  },
-  {
-    id: 2,
-    title: "Heritage Hues",
-    description: "A cross-platform travel and tourism app built with Flutter & Dart. Aggregates data on heritage sites and commerce markets.",
-    technologies: ["Flutter", "Dart", "FlutterFlow", "MapTiler", "Supabase"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "",
-    appStore: "",
-    playStore: "",
-    type: "University Project",
-    period: "Nov 2023 - Dec 2023",
-    team: "2",
-    achievement: "Won First Prize at the University-Level Project Expo (2024)",
-    category: "mobile" as const,
-    details: "A cross-platform travel and tourism application built with Flutter and Dart, designed to streamline the process of finding information about various places. The app aggregates data from multiple sources, focusing on hereditary and commerce markets to showcase hidden gems. Utilizing Flutterflow and APIs for automation, HeritageHues offers a user-friendly experience. For mapping, it employs MapTiler, an open-source alternative to Google API, and uses Supabase for its backend.",
-    featured: true
-  },
-  {
-    id: 3,
-    title: "Travel Together",
-    description: "AI-driven travel app offering personalized itineraries. Developed a secure backend using Firebase and designed an interactive admin dashboard.",
-    technologies: ["Flutter", "Dart", "Firebase", "Firestore", "AI Integration"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/BhanuPrakashChintal/TravelTogether",
-    live: "",
-    appStore: "",
-    playStore: "",
-    type: "Freelancing Project",
-    period: "May 2024 – Jun 2024",
-    team: "1",
-    achievement: null,
-    category: "mobile" as const,
-    details: "Developed a smart travel application featuring AI-powered itinerary planning and real-time geolocation navigation. Designed an intuitive user interface with a comprehensive admin panel. Utilized Firebase for secure backend and efficient data handling.",
-    featured: true
-  },
-  {
-    id: 4,
-    title: "Data Analytics & Visualization Studio",
-    description: "Streamlit-based analytics platform for CSV/XLSX datasets with automatic schema detection, interactive dashboards, and KPI visualization.",
-    technologies: ["Python", "Streamlit", "pandas", "Plotly", "NumPy"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/JadhavMeghana/Data-Analytics---Visualization-Studio",
-    live: "https://dav-studio.streamlit.app/",
-    appStore: "",
-    playStore: "",
-    type: "Personal Project",
-    period: "Aug 2025",
-    team: "1",
-    achievement: null,
-    category: "data" as const,
-    details: "Built a comprehensive Streamlit-based analytics platform that automatically detects schemas and column mappings. Delivers end-to-end data analysis including trends, distributions, and outlier detection. Features interactive dashboards with KPIs and advanced filtering capabilities.",
-    featured: false
-  },
-  {
-    id: 5,
-    title: "Geek for Geeks Student Club Website",
-    description: "Developed a university club website for event updates using HTML, Bootstrap, JavaScript, Cloudflare CMS, GitHub, and Firebase.",
-    technologies: ["HTML", "Bootstrap", "JavaScript", "Cloudflare CMS", "Firebase"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "",
-    appStore: "",
-    playStore: "",
-    type: "University Project",
-    period: "2024",
-    team: "1",
-    achievement: null,
-    category: "web" as const,
-    details: "Developed a university club website for event updates and announcements. Built with HTML, Bootstrap, and JavaScript, integrated with Cloudflare CMS for content management and Firebase for backend services.",
-    featured: false
-  },
-  {
-    id: 6,
-    title: "SaralEvents",
-    description: "A comprehensive event management and booking platform with vendor management, real-time availability tracking, and featured events system.",
-    technologies: ["Flutter", "Dart", "TypeScript", "Supabase", "PLpgSQL", "Vercel"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/SOLVING-CLUB/SaralEvents",
-    live: "https://saralevents.vercel.app",
-    appStore: "",
-    playStore: "",
-    type: "Freelance Project",
-    period: "2024",
-    team: "2+",
-    achievement: null,
-    category: "mobile" as const,
-    details: "SaralEvents is a full-stack event management platform built with Flutter and Dart for the mobile application, TypeScript for web components, and Supabase for backend services. The platform features comprehensive event planning capabilities including vendor management, real-time availability tracking, banner system for promotions, featured events showcase, and an integrated booking system. The project includes a vendor app for service providers to manage their events and availability. Built with modern architecture using Supabase for database management, real-time updates, and authentication.",
-    featured: true
-  },
-  {
-    id: 7,
-    title: "Plattrr",
-    description: "A full-stack cross-platform application with web, iOS, and Android support. Provided technical support and managed app store deployments.",
-    technologies: ["TypeScript", "React", "Supabase", "Firebase", "Capacitor", "Vercel", "iOS", "Android"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/SOLVING-CLUB/plattr",
-    live: "https://plattrr.vercel.app",
-    appStore: "https://apps.apple.com/app/plattrr",
-    playStore: "https://play.google.com/store/apps/details?id=com.plattrr.app",
-    type: "Freelance Project",
-    period: "2024",
-    team: "4",
-    achievement: null,
-    category: "mobile" as const,
-    details: "Plattrr is a comprehensive cross-platform application built with TypeScript, React, and Capacitor for mobile deployment. The project features a full-stack architecture with client, server, and mobile components. Provided technical support throughout the development process and successfully managed deployments to both Apple App Store and Google Play Store. The application utilizes Supabase for backend services, Firebase for additional integrations, and Vercel for web hosting. Implemented proper build configurations for iOS and Android platforms, ensuring smooth cross-platform functionality.",
-    featured: true
-  },
-];
+import { getProjects } from "@/lib/portfolio-data";
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const projectId = parseInt(params.id);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    const loadedProjects = getProjects();
+    setProjects(loadedProjects);
+
+    // Listen for CMS updates
+    const handleUpdate = () => {
+      setProjects(getProjects());
+    };
+
+    window.addEventListener("cms-data-updated", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+
+    // Polling fallback for projects
+    const interval = setInterval(() => {
+      const lastUpdate = localStorage.getItem("cms_projects_updated");
+      if (lastUpdate) {
+        const currentProjects = getProjects();
+        if (JSON.stringify(currentProjects) !== JSON.stringify(projects)) {
+          setProjects(currentProjects);
+        }
+      }
+    }, 500);
+
+    return () => {
+      window.removeEventListener("cms-data-updated", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+      clearInterval(interval);
+    };
+  }, [projects]);
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <Card className="p-12 text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </Card>
+      </div>
+    );
+  }
+
   const project = projects.find(p => p.id === projectId);
 
   if (!project) {
@@ -204,11 +122,74 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                       </div>
                     </div>
                     {/* Laptop Screen */}
-                    <div className="bg-muted aspect-[16/10] flex items-center justify-center p-4 sm:p-6 md:p-8">
-                      <div className="text-center w-full">
-                        <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 line-clamp-2">{project.title}</div>
-                        <div className="text-xs sm:text-sm md:text-base text-muted-foreground">Project Preview</div>
-                      </div>
+                    <div className="bg-muted aspect-[16/10] overflow-hidden relative group">
+                      {project.image && project.image !== "/placeholder-project.jpg" && project.image.startsWith("data:") ? (
+                        <>
+                          <img
+                            src={project.image}
+                            alt={`${project.title} Preview`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          {project.live && (
+                            <a
+                              href={project.live}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="absolute inset-0 flex items-center justify-center bg-background/90 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
+                            >
+                              <div className="text-center p-6">
+                                <ExternalLink className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
+                                <div className="text-base font-semibold">View Live Site</div>
+                                <div className="text-sm text-muted-foreground mt-2">{project.live.replace(/^https?:\/\//, '').replace(/\/$/, '')}</div>
+                              </div>
+                            </a>
+                          )}
+                        </>
+                      ) : project.live ? (
+                        <>
+                          <iframe
+                            src={project.live}
+                            className="w-full h-full border-0"
+                            title={`${project.title} Preview`}
+                            loading="lazy"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            style={{ transform: "scale(0.7)", transformOrigin: "top left", width: "143%", height: "143%" }}
+                            onError={() => {
+                              // Fallback handled by overlay
+                            }}
+                          />
+                          {/* Screenshot fallback using screenshot service */}
+                          <img
+                            src={`https://image.thum.io/get/width/1280/crop/800/${encodeURIComponent(project.live)}`}
+                            alt={`${project.title} Preview`}
+                            className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                          <a
+                            href={project.live}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="absolute inset-0 flex items-center justify-center bg-background/90 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100"
+                          >
+                            <div className="text-center p-6">
+                              <ExternalLink className="h-10 w-10 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
+                              <div className="text-base font-semibold">View Live Site</div>
+                              <div className="text-sm text-muted-foreground mt-2">{project.live.replace(/^https?:\/\//, '').replace(/\/$/, '')}</div>
+                            </div>
+                          </a>
+                        </>
+                      ) : (
+                        <div className="flex items-center justify-center h-full p-4 sm:p-6 md:p-8">
+                          <div className="text-center w-full">
+                            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 line-clamp-2">{project.title}</div>
+                            <div className="text-xs sm:text-sm md:text-base text-muted-foreground">Project Preview</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     {/* Laptop Base */}
                     <div className="bg-card h-2 sm:h-3 rounded-b-lg border-t border-border"></div>
@@ -377,7 +358,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                {project.technologies.map((tech) => (
+                        {project.technologies.map((tech: string) => (
                   <Badge 
                     key={tech} 
                     variant="outline" 
