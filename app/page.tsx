@@ -1,33 +1,86 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowRight, Code, Briefcase, Mail, FolderOpen, Users, Award, TrendingUp, Sparkles, ExternalLink, Github } from "lucide-react";
+import { getHomeContent, getProjects } from "@/lib/portfolio-data";
 
 export default function Home() {
+  const [homeContent, setHomeContent] = useState({ name: "", badges: [], description: "" });
+  const [featuredProjects, setFeaturedProjects] = useState<ReturnType<typeof getProjects>>([]);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Mark as client-side rendered
+    setIsClient(true);
+    
+    const loadData = () => {
+      setHomeContent(getHomeContent());
+      setFeaturedProjects(getProjects().filter(p => p.featured).slice(0, 3));
+    };
+
+    // Load data on mount
+    loadData();
+
+    // Listen for CMS updates
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.type === "home" || customEvent.detail?.type === "projects") {
+        loadData();
+      }
+    };
+    
+    // Also listen for storage events (works across tabs)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "cms_home" || e.key === "cms_projects") {
+        loadData();
+      }
+    };
+    
+    window.addEventListener("cms-data-updated", handleUpdate);
+    window.addEventListener("storage", handleStorage);
+    
+    return () => {
+      window.removeEventListener("cms-data-updated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  // Show loading state during hydration to prevent mismatch
+  if (!isClient) {
+    return (
+      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <Avatar className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 ring-2 ring-border">
-            <AvatarImage src="/avatar.svg" alt="Bhanu Prakash Chintal" />
+            <AvatarImage src="/avatar.svg" alt={homeContent.name} />
             <AvatarFallback className="text-lg sm:text-xl md:text-2xl">BPC</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge>Data Analyst</Badge>
-              <Badge>Software Engineer</Badge>
-              <Badge>Flutter Developer</Badge>
+              {homeContent.badges.map((badge, index) => (
+                <Badge key={index}>{badge}</Badge>
+              ))}
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Hi, I&apos;m Bhanu Prakash Chintal
+              Hi, I&apos;m {homeContent.name}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6">
-              Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, 
-              visualization, and automation, along with strong Flutter and full-stack development skills. 
-              I enjoy building scalable applications, extracting insights from data, and solving real-world problems using technology.
+              {homeContent.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild className="w-full sm:w-auto">
@@ -127,71 +180,29 @@ export default function Home() {
           </Button>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="group hover:border-primary/50 transition-colors">
-            <CardHeader>
-              <CardTitle className="group-hover:text-primary transition-colors">Heritage Hues</CardTitle>
-              <CardDescription>
-                A cross-platform travel and tourism app built with Flutter & Dart. Aggregates data on heritage sites and commerce markets.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary" className="text-xs">Flutter</Badge>
-                <Badge variant="secondary" className="text-xs">Dart</Badge>
-                <Badge variant="secondary" className="text-xs">FlutterFlow</Badge>
-              </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/projects">
-                  View project
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors">
-            <CardHeader>
-              <CardTitle className="group-hover:text-primary transition-colors">Travel Together</CardTitle>
-              <CardDescription>
-                AI-driven travel app offering personalized itineraries. Developed a secure backend using Firebase and designed an interactive admin dashboard.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary" className="text-xs">Flutter</Badge>
-                <Badge variant="secondary" className="text-xs">Firebase</Badge>
-                <Badge variant="secondary" className="text-xs">AI Integration</Badge>
-              </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/projects">
-                  View project
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors">
-            <CardHeader>
-              <CardTitle className="group-hover:text-primary transition-colors">Geek for Geeks Student Club Website</CardTitle>
-              <CardDescription>
-                Developed a university club website for event updates using HTML, Bootstrap, JavaScript, Cloudflare CMS, GitHub, and Firebase.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary" className="text-xs">HTML</Badge>
-                <Badge variant="secondary" className="text-xs">Bootstrap</Badge>
-                <Badge variant="secondary" className="text-xs">JavaScript</Badge>
-              </div>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/projects">
-                  View project
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          {featuredProjects.map((project) => (
+            <Card key={project.id} className="group hover:border-primary/50 transition-colors">
+              <CardHeader>
+                <CardTitle className="group-hover:text-primary transition-colors">{project.title}</CardTitle>
+                <CardDescription>
+                  {project.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.technologies.slice(0, 3).map((tech, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">{tech}</Badge>
+                  ))}
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/projects#project-${project.id}`}>
+                    View project
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 

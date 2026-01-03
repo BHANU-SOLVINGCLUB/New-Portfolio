@@ -1,7 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Github, Linkedin, Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Hide footer on CMS routes
+  if (pathname?.startsWith("/cms")) {
+    return null;
+  }
+
   return (
     <footer className="border-t mt-auto">
       <div className="container mx-auto px-4 py-12">

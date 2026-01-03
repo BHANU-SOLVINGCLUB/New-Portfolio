@@ -1,110 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ExternalLink, Github, FolderOpen } from "lucide-react";
+import { ExternalLink, Github, FolderOpen, Smartphone } from "lucide-react";
+import Link from "next/link";
+import { getProjects, type Project, type ProjectCategory } from "@/lib/portfolio-data";
 
-type ProjectCategory = "all" | "mobile" | "web" | "data";
-
-const projects = [
-  {
-    id: 1,
-    title: "TUVO – Ticket Booking Platform",
-    description: "Full-stack Next.js 15 ticket booking platform with secure PayU payments, PDF ticket generation, and role-based admin dashboard.",
-    technologies: ["Next.js", "TypeScript", "Tailwind", "Radix UI", "Supabase", "Vercel"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "https://www.tuvo.in/",
-    type: "Freelance Project",
-    period: "June 2025",
-    team: "1",
-    achievement: null,
-    category: "web" as ProjectCategory,
-    details: "Built a full-stack ticket booking platform with secure PayU payments and server verification. Implemented PDF ticket generation with QR codes and automated email receipts. Developed a comprehensive role-based admin dashboard for managing events and bookings.",
-    featured: true
-  },
-  {
-    id: 2,
-    title: "Heritage Hues",
-    description: "A cross-platform travel and tourism app built with Flutter & Dart. Aggregates data on heritage sites and commerce markets.",
-    technologies: ["Flutter", "Dart", "FlutterFlow", "MapTiler", "Supabase"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "",
-    type: "University Project",
-    period: "Nov 2023 - Dec 2023",
-    team: "2",
-    achievement: "Won First Prize at the University-Level Project Expo (2024)",
-    category: "mobile" as ProjectCategory,
-    details: "A cross-platform travel and tourism application built with Flutter and Dart, designed to streamline the process of finding information about various places. The app aggregates data from multiple sources, focusing on hereditary and commerce markets to showcase hidden gems. Utilizing Flutterflow and APIs for automation, HeritageHues offers a user-friendly experience. For mapping, it employs MapTiler, an open-source alternative to Google API, and uses Supabase for its backend.",
-    featured: true
-  },
-  {
-    id: 3,
-    title: "Travel Together",
-    description: "AI-driven travel app offering personalized itineraries. Developed a secure backend using Firebase and designed an interactive admin dashboard.",
-    technologies: ["Flutter", "Dart", "Firebase", "Firestore", "AI Integration"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/BhanuPrakashChintal/TravelTogether",
-    live: "",
-    type: "Freelancing Project",
-    period: "May 2024 – Jun 2024",
-    team: "1",
-    achievement: null,
-    category: "mobile" as ProjectCategory,
-    details: "Developed a smart travel application featuring AI-powered itinerary planning and real-time geolocation navigation. Designed an intuitive user interface with a comprehensive admin panel. Utilized Firebase for secure backend and efficient data handling.",
-    featured: true
-  },
-  {
-    id: 4,
-    title: "Data Analytics & Visualization Studio",
-    description: "Streamlit-based analytics platform for CSV/XLSX datasets with automatic schema detection, interactive dashboards, and KPI visualization.",
-    technologies: ["Python", "Streamlit", "pandas", "Plotly", "NumPy"],
-    image: "/placeholder-project.jpg",
-    github: "https://github.com/JadhavMeghana/Data-Analytics---Visualization-Studio",
-    live: "https://dav-studio.streamlit.app/",
-    type: "Personal Project",
-    period: "Aug 2025",
-    team: "1",
-    achievement: null,
-    category: "data" as ProjectCategory,
-    details: "Built a comprehensive Streamlit-based analytics platform that automatically detects schemas and column mappings. Delivers end-to-end data analysis including trends, distributions, and outlier detection. Features interactive dashboards with KPIs and advanced filtering capabilities.",
-    featured: false
-  },
-  {
-    id: 5,
-    title: "Geek for Geeks Student Club Website",
-    description: "Developed a university club website for event updates using HTML, Bootstrap, JavaScript, Cloudflare CMS, GitHub, and Firebase.",
-    technologies: ["HTML", "Bootstrap", "JavaScript", "Cloudflare CMS", "Firebase"],
-    image: "/placeholder-project.jpg",
-    github: "",
-    live: "",
-    type: "University Project",
-    period: "2024",
-    team: "1",
-    achievement: null,
-    category: "web" as ProjectCategory,
-    details: "Developed a university club website for event updates and announcements. Built with HTML, Bootstrap, and JavaScript, integrated with Cloudflare CMS for content management and Firebase for backend services.",
-    featured: false
-  },
-];
+type FilterCategory = "all" | "mobile" | "web" | "data" | "freelance";
 
 export default function Projects() {
-  const [activeFilter, setActiveFilter] = useState<ProjectCategory>("all");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Mark as client-side rendered
+    setIsClient(true);
+    
+    // Load projects from shared data source
+    const loadProjects = () => {
+      setProjects(getProjects());
+    };
+    
+    // Load data on mount
+    loadProjects();
+
+    // Listen for CMS updates
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.type === "projects") {
+        loadProjects();
+      }
+    };
+    
+    // Also listen for storage events (works across tabs)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "cms_projects" || e.key === "cms_projects_updated" || e.key === "cms_trigger") {
+        loadProjects();
+      }
+    };
+    
+    // Poll for changes as a fallback (check every 500ms)
+    const pollInterval = setInterval(() => {
+      const lastUpdate = localStorage.getItem("cms_projects_updated");
+      if (lastUpdate && lastUpdate !== (window as any).__lastProjectsUpdate) {
+        (window as any).__lastProjectsUpdate = lastUpdate;
+        loadProjects();
+      }
+    }, 500);
+    
+    window.addEventListener("cms-data-updated", handleUpdate);
+    window.addEventListener("storage", handleStorage);
+    
+    return () => {
+      window.removeEventListener("cms-data-updated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(pollInterval);
+    };
+  }, []);
 
   const filteredProjects = activeFilter === "all" 
     ? projects 
+    : activeFilter === "freelance"
+    ? projects.filter(project => project.type?.toLowerCase().includes("freelance"))
     : projects.filter(project => project.category === activeFilter);
 
   const filterButtons = [
-    { id: "all" as ProjectCategory, label: "All Projects" },
-    { id: "mobile" as ProjectCategory, label: "Mobile App" },
-    { id: "web" as ProjectCategory, label: "Web Development" },
-    { id: "data" as ProjectCategory, label: "Data Analytics" },
+    { id: "all" as FilterCategory, label: "All Projects" },
+    { id: "mobile" as FilterCategory, label: "Mobile App" },
+    { id: "web" as FilterCategory, label: "Web Development" },
+    { id: "data" as FilterCategory, label: "Data Analytics" },
+    { id: "freelance" as FilterCategory, label: "Freelance" },
   ];
+
+  // Show loading state during hydration to prevent mismatch
+  if (!isClient) {
+    return (
+      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
@@ -119,13 +100,13 @@ export default function Projects() {
       </div>
 
       {/* Filter Buttons */}
-      <div className="flex flex-wrap items-center justify-center gap-3 mb-8 sm:mb-12">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-12 px-2">
         {filterButtons.map((filter) => (
           <Button
             key={filter.id}
             onClick={() => setActiveFilter(filter.id)}
             variant={activeFilter === filter.id ? "default" : "outline"}
-            className={`rounded-full px-4 sm:px-6 py-2 font-medium transition-all ${
+            className={`rounded-full px-3 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all ${
               activeFilter === filter.id
                 ? "bg-primary text-primary-foreground shadow-md"
                 : "bg-transparent border-border hover:bg-muted"
@@ -136,72 +117,109 @@ export default function Projects() {
         ))}
       </div>
 
-      <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {filteredProjects.length === 0 ? (
-          <Card className="p-12 text-center">
-            <p className="text-muted-foreground">No projects found in this category.</p>
+          <Card className="p-8 sm:p-12 text-center">
+            <p className="text-sm sm:text-base text-muted-foreground">No projects found in this category.</p>
           </Card>
         ) : (
           filteredProjects.map((project) => (
-          <Card key={project.id} className="group hover:border-primary/50 transition-colors overflow-hidden max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] flex flex-col">
+          <Card key={project.id} className="group hover:border-primary/50 transition-colors overflow-hidden max-h-[calc(100vh-200px)] sm:max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-200px)] flex flex-col">
             <div className="grid md:grid-cols-2 gap-0 flex-1 min-h-0">
               {/* Left Section - Visual/Image */}
-              <div className="relative bg-gradient-to-br from-green-500/20 to-green-600/10 p-4 sm:p-8 md:p-12 flex items-center justify-center min-h-[250px] sm:min-h-[300px] md:min-h-0 md:max-h-full">
-                <div className="relative w-full max-w-[150px] sm:max-w-[200px] md:max-w-[250px]">
-                  {/* Phone Mockup Background Circle */}
-                  <div className="absolute inset-0 bg-green-400/20 rounded-full blur-3xl scale-150"></div>
-                  {/* Placeholder for phone mockup - you can replace with actual image */}
-                  <div className="relative bg-card border-2 border-border rounded-[2rem] p-2 shadow-2xl">
-                    <div className="bg-muted rounded-[1.5rem] aspect-[9/19] flex items-center justify-center">
-                      <div className="text-center p-2 sm:p-4">
-                        <div className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2 line-clamp-2">{project.title}</div>
-                        <div className="text-xs sm:text-sm text-muted-foreground">Project Preview</div>
+              <div className={`relative p-4 sm:p-6 md:p-8 lg:p-12 flex items-center justify-center min-h-[200px] sm:min-h-[250px] md:min-h-0 md:max-h-full order-1 md:order-1 ${
+                project.category === "mobile" 
+                  ? "bg-gradient-to-br from-green-500/20 to-green-600/10" 
+                  : "bg-gradient-to-br from-blue-500/20 to-blue-600/10"
+              }`}>
+                {project.category === "mobile" ? (
+                  // Mobile Phone Mockup
+                  <div className="relative w-full max-w-[120px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-[250px]">
+                    <div className="absolute inset-0 bg-green-400/20 rounded-full blur-3xl scale-150"></div>
+                    <div className="relative bg-card border-2 border-border rounded-[2rem] p-1.5 sm:p-2 shadow-2xl">
+                      <div className="bg-muted rounded-[1.5rem] aspect-[9/19] flex items-center justify-center">
+                        <div className="text-center p-2 sm:p-3 md:p-4">
+                          <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold mb-1 sm:mb-2 line-clamp-2">{project.title}</div>
+                          <div className="text-[10px] sm:text-xs md:text-sm text-muted-foreground">Project Preview</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  // Laptop Mockup for Web Projects
+                  <div className="relative w-full max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]">
+                    <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-3xl scale-150"></div>
+                    <div className="relative bg-card border-2 border-border rounded-lg shadow-2xl">
+                      {/* Laptop Top Bar */}
+                      <div className="bg-muted/50 h-4 sm:h-6 md:h-8 rounded-t-lg flex items-center justify-center border-b border-border">
+                        <div className="flex gap-1 sm:gap-1.5 md:gap-2">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full bg-red-500/50"></div>
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full bg-yellow-500/50"></div>
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full bg-green-500/50"></div>
+                        </div>
+                      </div>
+                      {/* Laptop Screen */}
+                      <div className="bg-muted aspect-[16/10] flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6">
+                        <div className="text-center w-full">
+                          <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-bold mb-1 sm:mb-2 line-clamp-2">{project.title}</div>
+                          <div className="text-[8px] sm:text-[10px] md:text-xs text-muted-foreground">Project Preview</div>
+                        </div>
+                      </div>
+                      {/* Laptop Base */}
+                      <div className="bg-card h-1 sm:h-2 md:h-3 rounded-b-lg border-t border-border"></div>
+                      <div className="absolute -bottom-0.5 sm:-bottom-1 md:-bottom-2 left-1/2 transform -translate-x-1/2 w-16 sm:w-20 md:w-24 lg:w-32 h-0.5 sm:h-1 md:h-2 bg-muted rounded-full"></div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Right Section - Project Details */}
-              <div className="p-4 sm:p-6 md:p-8 flex flex-col min-h-0 flex-1">
-                <div className="flex-1 mb-4 min-h-0">
+              <div className="p-4 sm:p-5 md:p-6 lg:p-8 flex flex-col min-h-0 flex-1 order-2 md:order-2">
+                <div className="flex-1 mb-3 sm:mb-4 min-h-0">
                   {/* Title */}
                   <div className="mb-2 sm:mb-3">
-                    <CardTitle className="text-xl sm:text-2xl md:text-3xl group-hover:text-primary transition-colors line-clamp-2">
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl lg:text-3xl group-hover:text-primary transition-colors line-clamp-2">
                       {project.title}
                     </CardTitle>
                   </div>
 
                   {/* Meta Badges - Top Row */}
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
                     {project.team && (
-                      <Badge variant="secondary" className="text-xs sm:text-sm font-medium rounded-full px-2 sm:px-3 py-0.5 sm:py-1">
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs md:text-sm font-medium rounded-full px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1">
                         Team: {project.team}
                       </Badge>
                     )}
                     {project.period && (
-                      <Badge variant="secondary" className="text-xs sm:text-sm font-medium rounded-full px-2 sm:px-3 py-0.5 sm:py-1">
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs md:text-sm font-medium rounded-full px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1">
                         {project.period}
+                      </Badge>
+                    )}
+                    {(project.type?.toLowerCase().includes("freelance")) && (
+                      <Badge className="text-[10px] sm:text-xs md:text-sm font-medium rounded-full px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 bg-orange-600/20 text-orange-400 border-orange-600/50 hover:bg-orange-600/30">
+                        Freelance
                       </Badge>
                     )}
                   </div>
 
                   {/* Achievement Badge */}
                   {project.achievement && (
-                    <Badge className="text-xs sm:text-sm font-medium bg-green-600/20 text-green-400 border-green-600/50 hover:bg-green-600/30 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 mb-2 sm:mb-3">
-                      {project.achievement}
-                    </Badge>
+                    <div className="mb-2 sm:mb-3">
+                      <Badge className="text-[10px] sm:text-xs md:text-sm font-medium bg-green-600/20 text-green-400 border-green-600/50 hover:bg-green-600/30 rounded-full px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 line-clamp-2 inline-block">
+                        {project.achievement}
+                      </Badge>
+                    </div>
                   )}
 
                   {/* Description - Truncated Summary */}
-                  <CardDescription className="text-xs sm:text-sm md:text-base leading-relaxed mb-3 sm:mb-4 text-muted-foreground line-clamp-4 sm:line-clamp-5">
+                  <CardDescription className="text-xs sm:text-sm md:text-base leading-relaxed mb-2 sm:mb-3 md:mb-4 text-muted-foreground line-clamp-3 sm:line-clamp-4 md:line-clamp-5">
                     {project.details || project.description}
                   </CardDescription>
 
                   {/* Technology Badges */}
-                  <div className="flex flex-wrap gap-2 mb-3 sm:mb-4">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3 md:mb-4">
                     {project.technologies.map((tech) => (
-                      <Badge key={tech} variant="outline" className="text-xs sm:text-sm font-medium rounded-full px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-600/20 text-blue-400 border-blue-600/50 hover:bg-blue-600/30">
+                      <Badge key={tech} variant="outline" className="text-[10px] sm:text-xs md:text-sm font-medium rounded-full px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 bg-blue-600/20 text-blue-400 border-blue-600/50 hover:bg-blue-600/30">
                         {tech}
                       </Badge>
                     ))}
@@ -209,133 +227,125 @@ export default function Projects() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4 border-t border-border flex-shrink-0">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full sm:w-auto text-xs sm:text-sm">
-                        View Details
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-[90vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle className="text-xl sm:text-2xl">{project.title}</DialogTitle>
-                        <DialogDescription className="text-sm sm:text-base">{project.description}</DialogDescription>
-                      </DialogHeader>
-                      <div className="py-4">
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {project.team && (
-                            <Badge variant="secondary" className="text-xs sm:text-sm font-medium rounded-full">
-                              Team: {project.team}
-                            </Badge>
-                          )}
-                          {project.period && (
-                            <Badge variant="secondary" className="text-xs sm:text-sm font-medium rounded-full">
-                              {project.period}
-                            </Badge>
-                          )}
-                          {project.type && (
-                            <Badge variant="outline" className="text-xs sm:text-sm font-medium rounded-full">
-                              {project.type}
-                            </Badge>
-                          )}
-                        </div>
-                        {project.achievement && (
-                          <Badge className="text-xs sm:text-sm font-medium bg-green-600/20 text-green-400 border-green-600/50 mb-4 rounded-full">
-                            {project.achievement}
-                          </Badge>
-                        )}
-                        <h4 className="font-semibold mb-3 text-base sm:text-lg">Technologies Used:</h4>
-                        <div className="flex flex-wrap gap-2 mb-6">
-                          {project.technologies.map((tech) => (
-                            <Badge key={tech} variant="outline" className="text-xs sm:text-sm font-medium rounded-full bg-blue-600/20 text-blue-400 border-blue-600/50 hover:bg-blue-600/30">
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
-                        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6">
-                          {project.details || project.description}
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          {project.github && (
-                            <Button variant="outline" asChild>
-                              <a 
-                                href={project.github} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2"
-                              >
-                                <Github className="h-4 w-4" />
-                                View on GitHub
-                              </a>
-                            </Button>
-                          )}
-                          {project.live && (
-                            <Button variant="outline" asChild>
-                              <a 
-                                href={project.live} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                                Visit Live Site
-                              </a>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 md:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4 border-t border-border flex-shrink-0">
+                  <Button variant="outline" asChild className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm py-2 sm:py-2">
+                    <Link href={`/projects/${project.id}`}>
+                      View Details
+                    </Link>
+                  </Button>
                   {project.github ? (
                     <Button 
                       variant="outline" 
                       asChild
-                      className="w-full sm:w-auto text-xs sm:text-sm"
+                      className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm py-2 sm:py-2"
                     >
                       <a 
                         href={project.github} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2"
                       >
                         <Github className="h-3 w-3 sm:h-4 sm:w-4" />
-                        GitHub
+                        <span>GitHub</span>
                       </a>
                     </Button>
                   ) : (
                     <Button 
                       variant="outline" 
                       disabled
-                      className="w-full sm:w-auto text-xs sm:text-sm opacity-50 cursor-not-allowed"
+                      className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm opacity-50 cursor-not-allowed py-2 sm:py-2"
                     >
-                      <Github className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                      GitHub
+                      <Github className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                      <span>GitHub</span>
                     </Button>
                   )}
-                  {project.live ? (
+                  {project.category === "mobile" && (project.appStore || project.playStore) ? (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="outline" 
+                          className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm py-2 sm:py-2"
+                        >
+                          <Smartphone className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                          <span className="hidden sm:inline">View Live Project</span>
+                          <span className="sm:hidden">Live</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl sm:text-2xl">{project.title}</DialogTitle>
+                          <DialogDescription>
+                            Download the app from your preferred app store
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex flex-col gap-4 py-4">
+                          {project.appStore && (
+                            <a
+                              href={project.appStore}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors group"
+                            >
+                              <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-black flex items-center justify-center">
+                                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                </svg>
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-xs text-muted-foreground mb-1">Download on the</div>
+                                <div className="text-lg sm:text-xl font-semibold group-hover:text-primary transition-colors">App Store</div>
+                              </div>
+                              <ExternalLink className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                            </a>
+                          )}
+                          {project.playStore && (
+                            <a
+                              href={project.playStore}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors group"
+                            >
+                              <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-black flex items-center justify-center">
+                                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.05L14.18,12L3.84,21.95C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                                </svg>
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-xs text-muted-foreground mb-1">Get it on</div>
+                                <div className="text-lg sm:text-xl font-semibold group-hover:text-primary transition-colors">Google Play</div>
+                              </div>
+                              <ExternalLink className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                            </a>
+                          )}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  ) : project.live ? (
                     <Button 
                       variant="outline" 
                       asChild
-                      className="w-full sm:w-auto text-xs sm:text-sm"
+                      className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm py-2 sm:py-2"
                     >
                       <a 
                         href={project.live} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2"
+                        className="flex items-center justify-center gap-1.5 sm:gap-2"
                       >
                         <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
-                        View Live Project
+                        <span className="hidden sm:inline">View Live Project</span>
+                        <span className="sm:hidden">Live</span>
                       </a>
                     </Button>
                   ) : (
                     <Button 
                       variant="outline" 
                       disabled
-                      className="w-full sm:w-auto text-xs sm:text-sm opacity-50 cursor-not-allowed"
+                      className="w-full sm:flex-1 md:w-auto text-xs sm:text-sm opacity-50 cursor-not-allowed py-2 sm:py-2"
                     >
-                      <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                      View Live Project
+                      <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                      <span className="hidden sm:inline">View Live Project</span>
+                      <span className="sm:hidden">Live</span>
                     </Button>
                   )}
                 </div>

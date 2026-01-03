@@ -15,39 +15,34 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Home, User, FolderOpen, Code, Mail, Menu } from "lucide-react";
+import { Home, User, FolderOpen, Code, Lock, Menu } from "lucide-react";
 
-const navItems = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/about", label: "About", icon: User },
-  { href: "/projects", label: "Projects", icon: FolderOpen },
-  { href: "/skills", label: "Skills", icon: Code },
-  { href: "/contact", label: "Contact", icon: Mail },
+const cmsNavItems = [
+  { href: "/cms", label: "Dashboard", icon: Home },
+  { href: "/cms/home", label: "Home", icon: Home },
+  { href: "/cms/about", label: "About", icon: User },
+  { href: "/cms/projects", label: "Projects", icon: FolderOpen },
+  { href: "/cms/skills", label: "Skills", icon: Code },
 ];
 
-export function Navigation() {
+export function CMSNavigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-
-  // Hide navigation on CMS routes
-  if (pathname?.startsWith("/cms")) {
-    return null;
-  }
 
   return (
     <nav className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="text-lg sm:text-xl font-bold flex items-center gap-2">
-            <Code className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="hidden sm:inline">Portfolio</span>
+          <Link href="/cms" className="text-lg sm:text-xl font-bold flex items-center gap-2">
+            <Lock className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">CMS</span>
           </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <NavigationMenu>
               <NavigationMenuList>
-                {navItems.map((item) => {
+                {cmsNavItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <NavigationMenuItem key={item.href}>
@@ -79,7 +74,7 @@ export function Navigation() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <nav className="flex flex-col gap-4 mt-8">
-                {navItems.map((item) => {
+                {cmsNavItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <SheetClose key={item.href} asChild>

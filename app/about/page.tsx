@@ -1,11 +1,64 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, GraduationCap, Trophy, Building2, Calendar, Code2, FileText, User } from "lucide-react";
+import { getAboutContent } from "@/lib/portfolio-data";
 
 export default function About() {
+  const [aboutContent, setAboutContent] = useState({ name: "", title: "", bio: "", skills: [] });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Mark as client-side rendered
+    setIsClient(true);
+    
+    const loadData = () => {
+      setAboutContent(getAboutContent());
+    };
+
+    // Load data on mount
+    loadData();
+
+    // Listen for CMS updates
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.type === "about") {
+        loadData();
+      }
+    };
+    
+    // Also listen for storage events (works across tabs)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "cms_about") {
+        loadData();
+      }
+    };
+    
+    window.addEventListener("cms-data-updated", handleUpdate);
+    window.addEventListener("storage", handleStorage);
+    
+    return () => {
+      window.removeEventListener("cms-data-updated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  // Show loading state during hydration to prevent mismatch
+  if (!isClient) {
+    return (
+      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
@@ -25,33 +78,25 @@ export default function About() {
           <CardHeader>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
               <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-2 ring-border">
-                <AvatarImage src="/avatar.svg" alt="Bhanu Prakash Chintal" />
+                <AvatarImage src="/avatar.svg" alt={aboutContent.name} />
                 <AvatarFallback className="text-base sm:text-lg">BPC</AvatarFallback>
               </Avatar>
               <div className="text-center sm:text-left flex-1">
-                <CardTitle className="text-2xl sm:text-3xl mb-2">Bhanu Prakash Chintal</CardTitle>
+                <CardTitle className="text-2xl sm:text-3xl mb-2">{aboutContent.name}</CardTitle>
                 <CardDescription className="text-sm sm:text-base mb-4">
-                  Data Analyst | Software Engineer | Flutter Developer
+                  {aboutContent.title}
                 </CardDescription>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <Badge variant="secondary">Python</Badge>
-                  <Badge variant="secondary">Flutter</Badge>
-                  <Badge variant="secondary">Next.js</Badge>
-                  <Badge variant="secondary">TypeScript</Badge>
-                  <Badge variant="secondary">Data Analytics</Badge>
+                  {aboutContent.skills.map((skill, index) => (
+                    <Badge key={index} variant="secondary">{skill}</Badge>
+                  ))}
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, 
-              visualization, and automation, along with strong Flutter and full-stack development skills. 
-              Experienced in end-to-end product development, clean architecture, and cross-team collaboration.
-            </p>
-            <p className="text-muted-foreground leading-relaxed">
-              I enjoy building scalable applications, extracting insights from data, and solving real-world 
-              problems using technology.
+              {aboutContent.bio}
             </p>
           </CardContent>
         </Card>

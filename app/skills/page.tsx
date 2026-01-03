@@ -1,49 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Palette, Server, Database, Wrench, Sparkles, Code } from "lucide-react";
-
-const dataAnalyticsSkills = [
-  { name: "Python", level: 85 },
-  { name: "pandas", level: 80 },
-  { name: "NumPy", level: 75 },
-  { name: "Data Cleaning & Analysis", level: 85 },
-  { name: "Data Visualization", level: 80 },
-  { name: "KPI Dashboards", level: 75 },
-];
-
-const visualizationSkills = [
-  { name: "Streamlit", level: 85 },
-  { name: "Plotly", level: 80 },
-];
-
-const appDevSkills = [
-  { name: "Flutter", level: 88 },
-  { name: "Dart", level: 85 },
-  { name: "REST APIs", level: 80 },
-  { name: "Firebase", level: 85 },
-  { name: "Supabase", level: 75 },
-  { name: "Next.js", level: 80 },
-  { name: "TypeScript", level: 75 },
-];
-
-const databaseSkills = [
-  { name: "Firestore", level: 85 },
-  { name: "Supabase", level: 75 },
-  { name: "SQL (Basics)", level: 70 },
-  { name: "Oracle / PL-SQL", level: 60 },
-];
-
-const toolsSkills = [
-  { name: "Git & GitHub", level: 85 },
-  { name: "Modular Architecture", level: 80 },
-  { name: "Debugging & Performance", level: 80 },
-  { name: "Automation", level: 75 },
-  { name: "Notion", level: 85 },
-  { name: "AI-assisted Development", level: 80 },
-];
+import { getSkills } from "@/lib/portfolio-data";
 
 const SkillCard = ({ name, level }: { name: string; level: number }) => (
   <div className="space-y-2">
@@ -56,6 +20,60 @@ const SkillCard = ({ name, level }: { name: string; level: number }) => (
 );
 
 export default function Skills() {
+  const [skills, setSkills] = useState({
+    dataAnalytics: [],
+    visualization: [],
+    appDev: [],
+    database: [],
+    tools: [],
+  });
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Mark as client-side rendered
+    setIsClient(true);
+    
+    const loadData = () => {
+      setSkills(getSkills());
+    };
+
+    // Load data on mount
+    loadData();
+
+    // Listen for CMS updates
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.type === "skills") {
+        loadData();
+      }
+    };
+    
+    // Also listen for storage events (works across tabs)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "cms_skills") {
+        loadData();
+      }
+    };
+    
+    window.addEventListener("cms-data-updated", handleUpdate);
+    window.addEventListener("storage", handleStorage);
+    
+    return () => {
+      window.removeEventListener("cms-data-updated", handleUpdate);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+  // Show loading state during hydration to prevent mismatch
+  if (!isClient) {
+    return (
+      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
@@ -107,7 +125,7 @@ export default function Skills() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {dataAnalyticsSkills.map((skill) => (
+                {skills.dataAnalytics.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
@@ -123,7 +141,7 @@ export default function Skills() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {visualizationSkills.map((skill) => (
+                {skills.visualization.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
@@ -139,7 +157,7 @@ export default function Skills() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {appDevSkills.map((skill) => (
+                {skills.appDev.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
@@ -155,7 +173,7 @@ export default function Skills() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {databaseSkills.map((skill) => (
+                {skills.database.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
@@ -171,7 +189,7 @@ export default function Skills() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {toolsSkills.map((skill) => (
+                {skills.tools.map((skill) => (
                   <SkillCard key={skill.name} name={skill.name} level={skill.level} />
                 ))}
               </CardContent>
