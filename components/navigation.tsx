@@ -15,12 +15,12 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Home, User, FolderKanban, Code, Mail, Menu } from "lucide-react";
+import { Home, User, FolderOpen, Code, Mail, Menu } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/about", label: "About", icon: User },
-  { href: "/projects", label: "Projects", icon: FolderKanban },
+  { href: "/projects", label: "Projects", icon: FolderOpen },
   { href: "/skills", label: "Skills", icon: Code },
   { href: "/contact", label: "Contact", icon: Mail },
 ];

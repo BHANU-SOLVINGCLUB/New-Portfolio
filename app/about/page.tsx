@@ -3,8 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Briefcase, GraduationCap, Trophy, Building2, Calendar, Code2, Mic, FileText, User } from "lucide-react";
+import { Briefcase, GraduationCap, Trophy, Building2, Calendar, Code2, FileText, User } from "lucide-react";
 
 export default function About() {
   return (
@@ -181,14 +180,14 @@ export default function About() {
                 </div>
                 <Separator />
                 <div>
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-semibold text-lg">Certifications</h3>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Badge>CISCO NetAcad – Python 1 & 2</Badge>
-                    <Badge>AWS Academy Graduate – Cloud Foundations</Badge>
+                  <h3 className="font-semibold text-lg mb-4">Certifications</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <Badge variant="secondary" className="px-4 py-2 text-sm font-medium rounded-full">
+                      CISCO NetAcad – Python 1 & 2
+                    </Badge>
+                    <Badge variant="secondary" className="px-4 py-2 text-sm font-medium rounded-full">
+                      AWS Academy Graduate – Cloud Foundations
+                    </Badge>
                   </div>
                 </div>
               </CardContent>
@@ -196,63 +195,93 @@ export default function About() {
           </TabsContent>
 
           <TabsContent value="achievements" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Achievements</CardTitle>
-                <CardDescription>Notable accomplishments</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-primary" />
-                      Scholarships & Awards
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <ul className="list-disc list-inside space-y-1 text-sm">
-                        <li>Telangana State Post Matric Scholarship (TS EAMCET) – 4 years</li>
-                        <li>First Prize – Heritage Hues Project, University Expo (2024)</li>
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="item-2">
-                    <AccordionTrigger className="flex items-center gap-2">
-                      <Code2 className="h-4 w-4 text-primary" />
-                      Leadership & Community
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <ul className="list-disc list-inside space-y-1 text-sm">
-                        <li>Led CodeChef Chapter at university</li>
-                        <li>Technical Team Member – GeeksforGeeks Student Club</li>
-                        <li>Organizer – iTechnoz Technical Club events & hackathons</li>
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="item-3">
-                    <AccordionTrigger className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      Research Publication
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <p className="text-sm mb-2">
-                        <strong>Decentralized Cloud Storage using Blockchain & IPFS</strong>
-                      </p>
-                      <p className="text-sm text-muted-foreground mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
+              {/* Scholarships & Awards - Large Card */}
+              <Card className="md:col-span-2 group hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                    <Trophy className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Scholarships & Awards</CardTitle>
+                  <CardDescription>Recognition for academic excellence</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>Telangana State Post Matric Scholarship (TS EAMCET) – 4 years</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>First Prize – Heritage Hues Project, University Expo (2024)</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Leadership - Medium Card */}
+              <Card className="md:col-span-2 lg:col-span-2 group hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                    <Code2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Leadership & Community</CardTitle>
+                  <CardDescription>Active involvement in tech communities</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>Led CodeChef Chapter at university</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>Technical Team Member – GeeksforGeeks Student Club</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary mt-1">•</span>
+                      <span>Organizer – iTechnoz Technical Club events & hackathons</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Research Publication - Large Card */}
+              <Card className="md:col-span-2 lg:col-span-4 group hover:border-primary/50 transition-colors">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+                        <FileText className="h-6 w-6 text-primary" />
+                      </div>
+                      <CardTitle>Research Publication</CardTitle>
+                      <CardDescription>Published research work</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-semibold text-base mb-1">
+                        Decentralized Cloud Storage using Blockchain & IPFS
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-3">
                         Published at Anurag University (Apr 2025)
                       </p>
                       <a 
                         href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5142864" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline"
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
                       >
-                        View Published Paper →
+                        View Published Paper
+                        <FileText className="h-4 w-4" />
                       </a>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-            </Card>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
