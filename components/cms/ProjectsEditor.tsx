@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Save, Trash2, Edit, X, ExternalLink, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
 import type { Project, ProjectCategory } from "@/lib/portfolio-data";
-import { uploadImage, getProjectImagePath } from "@/lib/firebase-storage";
+import { uploadImage, getProjectImagePath, deleteOldProjectImage } from "@/lib/firebase-storage";
 
 interface ProjectsEditorProps {
   projects: Project[];
@@ -36,7 +36,7 @@ export function ProjectsEditor({ projects, onSave }: ProjectsEditorProps) {
       title: "",
       description: "",
       technologies: [],
-      image: "/placeholder-project.jpg",
+      image: "",
       github: "",
       live: "",
       type: "",
@@ -216,6 +216,10 @@ function ProjectForm({
       };
       reader.readAsDataURL(file);
 
+      // Delete old image from Firebase Storage if it exists
+      const oldImageUrl = project.image;
+      await deleteOldProjectImage(oldImageUrl);
+
       // Upload to Firebase Storage
       const path = getProjectImagePath(project.id, file.name);
       const downloadURL = await uploadImage(file, path);
@@ -234,11 +238,15 @@ function ProjectForm({
     }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = async () => {
+    // Delete old image from Firebase Storage if it exists
+    const oldImageUrl = project.image;
+    await deleteOldProjectImage(oldImageUrl);
+    
     setImagePreview(null);
     setProject({
       ...project,
-      image: "/placeholder-project.jpg",
+      image: "",
     });
   };
 

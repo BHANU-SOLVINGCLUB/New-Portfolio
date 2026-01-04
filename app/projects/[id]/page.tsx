@@ -145,7 +145,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                     </div>
                     {/* Laptop Screen */}
                     <div className="bg-muted aspect-[16/10] overflow-hidden relative group">
-                      {project.image && project.image !== "/placeholder-project.jpg" && project.image.startsWith("data:") ? (
+                      {project.image && project.image !== "/placeholder-project.jpg" && project.image !== "" && (project.image.startsWith("data:") || project.image.startsWith("https://")) ? (
                         <>
                           <img
                             src={project.image}

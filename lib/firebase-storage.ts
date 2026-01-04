@@ -100,3 +100,45 @@ export const getProjectImagePath = (projectId: number, filename?: string): strin
   return `projects/${projectId}/image.${extension}`;
 };
 
+/**
+ * Extract Firebase Storage path from a download URL
+ * @param url - Firebase Storage download URL
+ * @returns Storage path or null if not a Firebase Storage URL
+ */
+export const getStoragePathFromUrl = (url: string): string | null => {
+  try {
+    // Firebase Storage URLs have a specific pattern
+    // Example: https://firebasestorage.googleapis.com/v0/b/project.appspot.com/o/projects%2F123%2Fimage.jpg?alt=media&token=...
+    const match = url.match(/\/o\/([^?]+)/);
+    if (match) {
+      return decodeURIComponent(match[1]);
+    }
+    return null;
+  } catch (error) {
+    console.error("Error extracting storage path from URL:", error);
+    return null;
+  }
+};
+
+/**
+ * Delete old project image if it exists in Firebase Storage
+ * @param oldImageUrl - The old image URL (Firebase Storage URL)
+ */
+export const deleteOldProjectImage = async (oldImageUrl: string | null | undefined): Promise<void> => {
+  if (!oldImageUrl || !storage) return;
+  
+  // Only delete if it's a Firebase Storage URL
+  if (!oldImageUrl.startsWith("https://")) return;
+  
+  try {
+    const storagePath = getStoragePathFromUrl(oldImageUrl);
+    if (storagePath) {
+      await deleteImage(storagePath);
+      console.log("Deleted old image from storage:", storagePath);
+    }
+  } catch (error) {
+    // Don't throw - it's okay if the old image doesn't exist
+    console.warn("Could not delete old image (may not exist):", error);
+  }
+};
+
