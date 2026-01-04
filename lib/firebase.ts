@@ -1,6 +1,6 @@
 // Firebase configuration and initialization
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore } from "firebase/firestore";
+import { getFirestore, Firestore, enableNetwork, disableNetwork } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -24,7 +24,16 @@ if (typeof window !== "undefined") {
   } else {
     app = getApps()[0];
   }
+  
+  // Initialize Firestore with explicit settings
   db = getFirestore(app);
+  
+  // Ensure network is enabled (disable offline persistence for now)
+  // This prevents "client is offline" errors
+  enableNetwork(db).catch((error) => {
+    console.warn("Firebase network enable warning:", error);
+  });
+  
   storage = getStorage(app);
 }
 

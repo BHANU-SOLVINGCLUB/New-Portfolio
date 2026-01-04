@@ -6,6 +6,7 @@ import {
   setDoc, 
   onSnapshot,
   Timestamp,
+  enableNetwork,
   type Firestore
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -34,11 +35,25 @@ const isFirebaseReady = (): boolean => {
   return typeof window !== "undefined" && db !== undefined;
 };
 
+// Helper to ensure network is enabled
+const ensureNetworkEnabled = async (): Promise<void> => {
+  if (db) {
+    try {
+      await enableNetwork(db);
+    } catch (error) {
+      // Network already enabled or other error, ignore
+    }
+  }
+};
+
 // Projects
 export const getProjects = async (): Promise<Project[]> => {
   if (!isFirebaseReady() || !db) return defaultProjects;
   
   try {
+    // Ensure network is enabled before fetching
+    await ensureNetworkEnabled();
+    
     const docRef = doc(db, COLLECTIONS.projects, "data");
     const docSnap = await getDoc(docRef);
     
@@ -49,8 +64,16 @@ export const getProjects = async (): Promise<Project[]> => {
     // If no data exists, initialize with defaults
     await setDoc(docRef, { items: defaultProjects });
     return defaultProjects;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching projects:", error);
+    // If offline error, return defaults instead of failing
+    if (error?.code === "failed-precondition" || 
+        error?.code === "unavailable" ||
+        error?.message?.includes("offline") ||
+        error?.message?.includes("network")) {
+      console.warn("Firebase offline, using default data");
+      return defaultProjects;
+    }
     return defaultProjects;
   }
 };
@@ -81,6 +104,7 @@ export const subscribeToProjects = (
     return () => {};
   }
   
+  ensureNetworkEnabled();
   const docRef = doc(db, COLLECTIONS.projects, "data");
   const unsubscribe = onSnapshot(
     docRef,
@@ -91,8 +115,14 @@ export const subscribeToProjects = (
         callback(defaultProjects);
       }
     },
-    (error) => {
+    (error: any) => {
       console.error("Error in projects subscription:", error);
+      if (error?.code === "failed-precondition" || 
+          error?.code === "unavailable" ||
+          error?.message?.includes("offline") ||
+          error?.message?.includes("network")) {
+        console.warn("Firebase offline, using default data");
+      }
       callback(defaultProjects);
     }
   );
@@ -105,6 +135,7 @@ export const getHomeContent = async () => {
   if (!isFirebaseReady() || !db) return defaultHomeContent;
   
   try {
+    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.home, "data");
     const docSnap = await getDoc(docRef);
     
@@ -114,8 +145,14 @@ export const getHomeContent = async () => {
     
     await setDoc(docRef, defaultHomeContent);
     return defaultHomeContent;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching home content:", error);
+    if (error?.code === "failed-precondition" || 
+        error?.code === "unavailable" ||
+        error?.message?.includes("offline") ||
+        error?.message?.includes("network")) {
+      console.warn("Firebase offline, using default data");
+    }
     return defaultHomeContent;
   }
 };
@@ -146,6 +183,7 @@ export const subscribeToHomeContent = (
     return () => {};
   }
   
+  ensureNetworkEnabled();
   const docRef = doc(db, COLLECTIONS.home, "data");
   const unsubscribe = onSnapshot(
     docRef,
@@ -156,8 +194,14 @@ export const subscribeToHomeContent = (
         callback(defaultHomeContent);
       }
     },
-    (error) => {
+    (error: any) => {
       console.error("Error in home content subscription:", error);
+      if (error?.code === "failed-precondition" || 
+          error?.code === "unavailable" ||
+          error?.message?.includes("offline") ||
+          error?.message?.includes("network")) {
+        console.warn("Firebase offline, using default data");
+      }
       callback(defaultHomeContent);
     }
   );
@@ -170,6 +214,7 @@ export const getAboutContent = async () => {
   if (!isFirebaseReady() || !db) return defaultAboutContent;
   
   try {
+    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.about, "data");
     const docSnap = await getDoc(docRef);
     
@@ -179,8 +224,14 @@ export const getAboutContent = async () => {
     
     await setDoc(docRef, defaultAboutContent);
     return defaultAboutContent;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching about content:", error);
+    if (error?.code === "failed-precondition" || 
+        error?.code === "unavailable" ||
+        error?.message?.includes("offline") ||
+        error?.message?.includes("network")) {
+      console.warn("Firebase offline, using default data");
+    }
     return defaultAboutContent;
   }
 };
@@ -211,6 +262,7 @@ export const subscribeToAboutContent = (
     return () => {};
   }
   
+  ensureNetworkEnabled();
   const docRef = doc(db, COLLECTIONS.about, "data");
   const unsubscribe = onSnapshot(
     docRef,
@@ -221,8 +273,14 @@ export const subscribeToAboutContent = (
         callback(defaultAboutContent);
       }
     },
-    (error) => {
+    (error: any) => {
       console.error("Error in about content subscription:", error);
+      if (error?.code === "failed-precondition" || 
+          error?.code === "unavailable" ||
+          error?.message?.includes("offline") ||
+          error?.message?.includes("network")) {
+        console.warn("Firebase offline, using default data");
+      }
       callback(defaultAboutContent);
     }
   );
@@ -235,6 +293,7 @@ export const getSkills = async () => {
   if (!isFirebaseReady() || !db) return defaultSkills;
   
   try {
+    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.skills, "data");
     const docSnap = await getDoc(docRef);
     
@@ -244,8 +303,14 @@ export const getSkills = async () => {
     
     await setDoc(docRef, defaultSkills);
     return defaultSkills;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching skills:", error);
+    if (error?.code === "failed-precondition" || 
+        error?.code === "unavailable" ||
+        error?.message?.includes("offline") ||
+        error?.message?.includes("network")) {
+      console.warn("Firebase offline, using default data");
+    }
     return defaultSkills;
   }
 };
@@ -276,6 +341,7 @@ export const subscribeToSkills = (
     return () => {};
   }
   
+  ensureNetworkEnabled();
   const docRef = doc(db, COLLECTIONS.skills, "data");
   const unsubscribe = onSnapshot(
     docRef,
@@ -286,8 +352,14 @@ export const subscribeToSkills = (
         callback(defaultSkills);
       }
     },
-    (error) => {
+    (error: any) => {
       console.error("Error in skills subscription:", error);
+      if (error?.code === "failed-precondition" || 
+          error?.code === "unavailable" ||
+          error?.message?.includes("offline") ||
+          error?.message?.includes("network")) {
+        console.warn("Firebase offline, using default data");
+      }
       callback(defaultSkills);
     }
   );
