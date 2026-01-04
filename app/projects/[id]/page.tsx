@@ -9,31 +9,71 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ArrowLeft, ExternalLink, Github, Calendar, Users, Award, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { subscribeToProjects, type Project } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const projectId = parseInt(params.id);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
     
+    // Try to get preloaded data first
+    const preloadedData = dataPreloader.getData();
+    if (preloadedData.loaded) {
+      setProjects(preloadedData.projects);
+      setLoading(false);
+      // Update title with project name
+      const project = preloadedData.projects.find(p => p.id === projectId);
+      if (project) {
+        document.title = `${project.title} | Bhanu Prakash Chintal`;
+      }
+    } else {
+      // Wait for preloader if not ready
+      dataPreloader.preloadAll().then((data) => {
+        setProjects(data.projects);
+        setLoading(false);
+        // Update title with project name
+        const project = data.projects.find(p => p.id === projectId);
+        if (project) {
+          document.title = `${project.title} | Bhanu Prakash Chintal`;
+        }
+      });
+    }
+    
     // Subscribe to real-time updates from Firestore
     const unsubscribe = subscribeToProjects((data) => {
       setProjects(data);
+      setLoading(false);
+      // Update title with project name
+      const project = data.find(p => p.id === projectId);
+      if (project) {
+        document.title = `${project.title} | Bhanu Prakash Chintal`;
+      }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [projectId]);
 
-  if (!isClient) {
+  if (!isClient || loading) {
     return (
       <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <Card className="p-12 text-center">
-          <p className="text-muted-foreground">Loading...</p>
+        <Card className="p-12">
+          <Skeleton className="h-10 w-64 mb-4" />
+          <Skeleton className="h-6 w-full mb-2" />
+          <Skeleton className="h-6 w-5/6 mb-8" />
+          <Skeleton className="h-64 w-full rounded-lg mb-6" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </div>
         </Card>
       </div>
     );

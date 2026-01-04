@@ -3,12 +3,19 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
+// Preload data on app initialization
+import "@/lib/data-preloader";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Bhanu Prakash Chintal | Data Analyst | Software Engineer | Flutter Developer",
-  description: "Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, visualization, and automation, along with strong Flutter and full-stack development skills.",
+  title: "Home | Bhanu Prakash Chintal",
+  description: "Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, visualization, and automation, along with strong Flutter and full-stack development skills",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

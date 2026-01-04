@@ -2,6 +2,7 @@
 
 import { AboutEditor } from "@/components/cms/AboutEditor";
 import { getAboutContent, saveAboutContent, defaultAboutContent } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
 import { useState, useEffect } from "react";
 
 export default function CMSAbout() {
@@ -9,13 +10,27 @@ export default function CMSAbout() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set page title
+    document.title = "CMS - About | Bhanu Prakash Chintal";
+    
     const loadContent = async () => {
       try {
-        const data = await getAboutContent();
-        setAboutContent(data);
+        // Try to get preloaded data first
+        const preloadedData = dataPreloader.getData();
+        if (preloadedData.loaded) {
+          setAboutContent(preloadedData.aboutContent);
+          setLoading(false);
+        } else {
+          // Wait for preloader or fetch directly
+          const data = await Promise.race([
+            dataPreloader.preloadAll().then(d => d.aboutContent),
+            getAboutContent()
+          ]);
+          setAboutContent(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error loading about content:", error);
-      } finally {
         setLoading(false);
       }
     };

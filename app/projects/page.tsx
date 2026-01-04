@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ExternalLink, Github, FolderOpen, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { subscribeToProjects, type Project, type ProjectCategory } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
+import { ProjectCardListSkeleton } from "@/components/loading/ProjectCardSkeleton";
 
 type FilterCategory = "all" | "mobile" | "web" | "data" | "freelance";
 
@@ -15,14 +17,31 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterCategory>("all");
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mark as client-side rendered
     setIsClient(true);
+    
+    // Set page title
+    document.title = "Projects | Bhanu Prakash Chintal";
+    
+    // Try to get preloaded data first
+    const preloadedData = dataPreloader.getData();
+    if (preloadedData.loaded) {
+      setProjects(preloadedData.projects);
+      setLoading(false);
+    } else {
+      // Wait for preloader if not ready
+      dataPreloader.preloadAll().then((data) => {
+        setProjects(data.projects);
+        setLoading(false);
+      });
+    }
     
     // Subscribe to real-time updates from Firestore
     const unsubscribe = subscribeToProjects((data) => {
       setProjects(data);
+      setLoading(false);
     });
     
     return () => {
@@ -44,13 +63,16 @@ export default function Projects() {
     { id: "freelance" as FilterCategory, label: "Freelance" },
   ];
 
-  // Show loading state during hydration to prevent mismatch
-  if (!isClient) {
+  if (!isClient || loading) {
     return (
       <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="text-center">
-          <p className="text-muted-foreground">Loading...</p>
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
+            <FolderOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-3xl sm:text-4xl font-bold">My Projects</h1>
+          </div>
         </div>
+        <ProjectCardListSkeleton count={5} />
       </div>
     );
   }

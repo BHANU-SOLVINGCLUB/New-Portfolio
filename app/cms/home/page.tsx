@@ -2,6 +2,7 @@
 
 import { HomeEditor } from "@/components/cms/HomeEditor";
 import { getHomeContent, saveHomeContent, defaultHomeContent } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
 import { useState, useEffect } from "react";
 
 export default function CMSHome() {
@@ -9,13 +10,27 @@ export default function CMSHome() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set page title
+    document.title = "CMS - Home | Bhanu Prakash Chintal";
+    
     const loadContent = async () => {
       try {
-        const data = await getHomeContent();
-        setHomeContent(data);
+        // Try to get preloaded data first
+        const preloadedData = dataPreloader.getData();
+        if (preloadedData.loaded) {
+          setHomeContent(preloadedData.homeContent);
+          setLoading(false);
+        } else {
+          // Wait for preloader or fetch directly
+          const data = await Promise.race([
+            dataPreloader.preloadAll().then(d => d.homeContent),
+            getHomeContent()
+          ]);
+          setHomeContent(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error loading home content:", error);
-      } finally {
         setLoading(false);
       }
     };

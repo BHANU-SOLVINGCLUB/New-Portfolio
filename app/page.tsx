@@ -8,15 +8,35 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowRight, Code, Briefcase, Mail, FolderOpen, Users, Award, TrendingUp, Sparkles, ExternalLink, Github } from "lucide-react";
 import { subscribeToHomeContent, subscribeToProjects, type Project } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
+import { HomeSkeleton } from "@/components/loading/HomeSkeleton";
 
 export default function Home() {
   const [homeContent, setHomeContent] = useState<{ name: string; badges: string[]; description: string }>({ name: "", badges: [], description: "" });
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mark as client-side rendered
     setIsClient(true);
+    
+    // Set page title
+    document.title = "Home | Bhanu Prakash Chintal";
+    
+    // Try to get preloaded data first
+    const preloadedData = dataPreloader.getData();
+    if (preloadedData.loaded) {
+      setHomeContent(preloadedData.homeContent);
+      setFeaturedProjects(preloadedData.projects.filter(p => p.featured).slice(0, 3));
+      setLoading(false);
+    } else {
+      // Wait for preloader if not ready
+      dataPreloader.preloadAll().then((data) => {
+        setHomeContent(data.homeContent);
+        setFeaturedProjects(data.projects.filter(p => p.featured).slice(0, 3));
+        setLoading(false);
+      });
+    }
     
     // Subscribe to real-time updates from Firestore
     const unsubscribeHome = subscribeToHomeContent((data) => {
@@ -33,15 +53,8 @@ export default function Home() {
     };
   }, []);
 
-  // Show loading state during hydration to prevent mismatch
-  if (!isClient) {
-    return (
-      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="text-center">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
+  if (!isClient || loading) {
+    return <HomeSkeleton />;
   }
 
   return (

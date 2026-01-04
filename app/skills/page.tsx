@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Palette, Server, Database, Wrench, Sparkles, Code } from "lucide-react";
 import { subscribeToSkills } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
+import { SkillsSkeleton } from "@/components/loading/SkillsSkeleton";
 
 const SkillCard = ({ name, level }: { name: string; level: number }) => (
   <div className="space-y-2">
@@ -41,29 +43,40 @@ export default function Skills() {
     tools: [],
   });
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mark as client-side rendered
     setIsClient(true);
+    
+    // Set page title
+    document.title = "Skills | Bhanu Prakash Chintal";
+    
+    // Try to get preloaded data first
+    const preloadedData = dataPreloader.getData();
+    if (preloadedData.loaded) {
+      setSkills(preloadedData.skills);
+      setLoading(false);
+    } else {
+      // Wait for preloader if not ready
+      dataPreloader.preloadAll().then((data) => {
+        setSkills(data.skills);
+        setLoading(false);
+      });
+    }
     
     // Subscribe to real-time updates from Firestore
     const unsubscribe = subscribeToSkills((data) => {
       setSkills(data);
+      setLoading(false);
     });
     
     return () => {
       unsubscribe();
     };
   }, []);
-  // Show loading state during hydration to prevent mismatch
-  if (!isClient) {
-    return (
-      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="text-center">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
+  
+  if (!isClient || loading) {
+    return <SkillsSkeleton />;
   }
 
   return (

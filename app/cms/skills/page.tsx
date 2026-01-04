@@ -2,6 +2,7 @@
 
 import { SkillsEditor } from "@/components/cms/SkillsEditor";
 import { getSkills, saveSkills, defaultSkills } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
 import { useState, useEffect } from "react";
 
 export default function CMSSkills() {
@@ -9,13 +10,27 @@ export default function CMSSkills() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Set page title
+    document.title = "CMS - Skills | Bhanu Prakash Chintal";
+    
     const loadSkills = async () => {
       try {
-        const data = await getSkills();
-        setSkills(data);
+        // Try to get preloaded data first
+        const preloadedData = dataPreloader.getData();
+        if (preloadedData.loaded) {
+          setSkills(preloadedData.skills);
+          setLoading(false);
+        } else {
+          // Wait for preloader or fetch directly
+          const data = await Promise.race([
+            dataPreloader.preloadAll().then(d => d.skills),
+            getSkills()
+          ]);
+          setSkills(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error loading skills:", error);
-      } finally {
         setLoading(false);
       }
     };

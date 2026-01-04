@@ -8,18 +8,37 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, GraduationCap, Trophy, Building2, Calendar, Code2, FileText, User } from "lucide-react";
 import { subscribeToAboutContent } from "@/lib/firebase-data";
+import { dataPreloader } from "@/lib/data-preloader";
+import { AboutSkeleton } from "@/components/loading/AboutSkeleton";
 
 export default function About() {
   const [aboutContent, setAboutContent] = useState<{ name: string; title: string; bio: string; skills: string[] }>({ name: "", title: "", bio: "", skills: [] });
   const [isClient, setIsClient] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mark as client-side rendered
     setIsClient(true);
+    
+    // Set page title
+    document.title = "About | Bhanu Prakash Chintal";
+    
+    // Try to get preloaded data first
+    const preloadedData = dataPreloader.getData();
+    if (preloadedData.loaded) {
+      setAboutContent(preloadedData.aboutContent);
+      setLoading(false);
+    } else {
+      // Wait for preloader if not ready
+      dataPreloader.preloadAll().then((data) => {
+        setAboutContent(data.aboutContent);
+        setLoading(false);
+      });
+    }
     
     // Subscribe to real-time updates from Firestore
     const unsubscribe = subscribeToAboutContent((data) => {
       setAboutContent(data);
+      setLoading(false);
     });
     
     return () => {
@@ -27,15 +46,8 @@ export default function About() {
     };
   }, []);
 
-  // Show loading state during hydration to prevent mismatch
-  if (!isClient) {
-    return (
-      <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="text-center">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
+  if (!isClient || loading) {
+    return <AboutSkeleton />;
   }
 
   return (

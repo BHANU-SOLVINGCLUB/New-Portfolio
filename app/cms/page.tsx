@@ -1,13 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Home, User, FolderOpen, Code, Database } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { migrateLocalStorageToFirebase } from "@/lib/migrate-to-firebase";
 
 export default function CMSDashboard() {
+  useEffect(() => {
+    // Set page title
+    document.title = "CMS Dashboard | Bhanu Prakash Chintal";
+  }, []);
   const [migrating, setMigrating] = useState(false);
 
   const handleMigration = async () => {

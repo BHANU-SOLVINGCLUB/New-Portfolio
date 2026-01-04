@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,10 @@ import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MapPin, Linkedin, Github, Twitter, Send, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 
 export default function Contact() {
+  useEffect(() => {
+    // Set page title
+    document.title = "Contact | Bhanu Prakash Chintal";
+  }, []);
   return (
     <div className="min-h-screen container mx-auto px-4 py-12 sm:py-16 md:py-20">
       <div className="max-w-4xl mx-auto">
