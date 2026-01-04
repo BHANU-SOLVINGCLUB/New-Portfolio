@@ -8,44 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, ExternalLink, Github, Calendar, Users, Award, Smartphone } from "lucide-react";
 import Link from "next/link";
-import { getProjects } from "@/lib/portfolio-data";
+import { subscribeToProjects, type Project } from "@/lib/firebase-data";
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const projectId = parseInt(params.id);
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const loadedProjects = getProjects();
-    setProjects(loadedProjects);
-
-    // Listen for CMS updates
-    const handleUpdate = () => {
-      setProjects(getProjects());
-    };
-
-    window.addEventListener("cms-data-updated", handleUpdate);
-    window.addEventListener("storage", handleUpdate);
-
-    // Polling fallback for projects
-    const interval = setInterval(() => {
-      const lastUpdate = localStorage.getItem("cms_projects_updated");
-      if (lastUpdate) {
-        const currentProjects = getProjects();
-        if (JSON.stringify(currentProjects) !== JSON.stringify(projects)) {
-          setProjects(currentProjects);
-        }
-      }
-    }, 500);
+    
+    // Subscribe to real-time updates from Firestore
+    const unsubscribe = subscribeToProjects((data) => {
+      setProjects(data);
+    });
 
     return () => {
-      window.removeEventListener("cms-data-updated", handleUpdate);
-      window.removeEventListener("storage", handleUpdate);
-      clearInterval(interval);
+      unsubscribe();
     };
-  }, [projects]);
+  }, []);
 
   if (!isClient) {
     return (

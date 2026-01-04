@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Palette, Server, Database, Wrench, Sparkles, Code } from "lucide-react";
-import { getSkills } from "@/lib/portfolio-data";
+import { subscribeToSkills } from "@/lib/firebase-data";
 
 const SkillCard = ({ name, level }: { name: string; level: number }) => (
   <div className="space-y-2">
@@ -46,34 +46,13 @@ export default function Skills() {
     // Mark as client-side rendered
     setIsClient(true);
     
-    const loadData = () => {
-      setSkills(getSkills());
-    };
-
-    // Load data on mount
-    loadData();
-
-    // Listen for CMS updates
-    const handleUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail?.type === "skills") {
-        loadData();
-      }
-    };
-    
-    // Also listen for storage events (works across tabs)
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === "cms_skills") {
-        loadData();
-      }
-    };
-    
-    window.addEventListener("cms-data-updated", handleUpdate);
-    window.addEventListener("storage", handleStorage);
+    // Subscribe to real-time updates from Firestore
+    const unsubscribe = subscribeToSkills((data) => {
+      setSkills(data);
+    });
     
     return () => {
-      window.removeEventListener("cms-data-updated", handleUpdate);
-      window.removeEventListener("storage", handleStorage);
+      unsubscribe();
     };
   }, []);
   // Show loading state during hydration to prevent mismatch

@@ -7,44 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Briefcase, GraduationCap, Trophy, Building2, Calendar, Code2, FileText, User } from "lucide-react";
-import { getAboutContent } from "@/lib/portfolio-data";
+import { subscribeToAboutContent } from "@/lib/firebase-data";
 
 export default function About() {
-  const [aboutContent, setAboutContent] = useState({ name: "", title: "", bio: "", skills: [] });
+  const [aboutContent, setAboutContent] = useState<{ name: string; title: string; bio: string; skills: string[] }>({ name: "", title: "", bio: "", skills: [] });
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     // Mark as client-side rendered
     setIsClient(true);
     
-    const loadData = () => {
-      setAboutContent(getAboutContent());
-    };
-
-    // Load data on mount
-    loadData();
-
-    // Listen for CMS updates
-    const handleUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail?.type === "about") {
-        loadData();
-      }
-    };
-    
-    // Also listen for storage events (works across tabs)
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === "cms_about") {
-        loadData();
-      }
-    };
-    
-    window.addEventListener("cms-data-updated", handleUpdate);
-    window.addEventListener("storage", handleStorage);
+    // Subscribe to real-time updates from Firestore
+    const unsubscribe = subscribeToAboutContent((data) => {
+      setAboutContent(data);
+    });
     
     return () => {
-      window.removeEventListener("cms-data-updated", handleUpdate);
-      window.removeEventListener("storage", handleStorage);
+      unsubscribe();
     };
   }, []);
 

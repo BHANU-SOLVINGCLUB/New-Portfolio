@@ -7,46 +7,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ArrowRight, Code, Briefcase, Mail, FolderOpen, Users, Award, TrendingUp, Sparkles, ExternalLink, Github } from "lucide-react";
-import { getHomeContent, getProjects } from "@/lib/portfolio-data";
+import { subscribeToHomeContent, subscribeToProjects, type Project } from "@/lib/firebase-data";
 
 export default function Home() {
-  const [homeContent, setHomeContent] = useState({ name: "", badges: [], description: "" });
-  const [featuredProjects, setFeaturedProjects] = useState<ReturnType<typeof getProjects>>([]);
+  const [homeContent, setHomeContent] = useState<{ name: string; badges: string[]; description: string }>({ name: "", badges: [], description: "" });
+  const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     // Mark as client-side rendered
     setIsClient(true);
     
-    const loadData = () => {
-      setHomeContent(getHomeContent());
-      setFeaturedProjects(getProjects().filter(p => p.featured).slice(0, 3));
-    };
-
-    // Load data on mount
-    loadData();
-
-    // Listen for CMS updates
-    const handleUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail?.type === "home" || customEvent.detail?.type === "projects") {
-        loadData();
-      }
-    };
+    // Subscribe to real-time updates from Firestore
+    const unsubscribeHome = subscribeToHomeContent((data) => {
+      setHomeContent(data);
+    });
     
-    // Also listen for storage events (works across tabs)
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === "cms_home" || e.key === "cms_projects") {
-        loadData();
-      }
-    };
-    
-    window.addEventListener("cms-data-updated", handleUpdate);
-    window.addEventListener("storage", handleStorage);
+    const unsubscribeProjects = subscribeToProjects((projects) => {
+      setFeaturedProjects(projects.filter(p => p.featured).slice(0, 3));
+    });
     
     return () => {
-      window.removeEventListener("cms-data-updated", handleUpdate);
-      window.removeEventListener("storage", handleStorage);
+      unsubscribeHome();
+      unsubscribeProjects();
     };
   }, []);
 

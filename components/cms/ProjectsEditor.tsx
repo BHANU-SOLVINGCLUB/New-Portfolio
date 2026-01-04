@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Save, Trash2, Edit, X, ExternalLink, Upload, Image as ImageIcon } from "lucide-react";
+import { Plus, Save, Trash2, Edit, X, ExternalLink, Upload, Image as ImageIcon, Loader2 } from "lucide-react";
 import type { Project, ProjectCategory } from "@/lib/portfolio-data";
+import { uploadImage, getProjectImagePath } from "@/lib/firebase-storage";
 
 interface ProjectsEditorProps {
   projects: Project[];
@@ -179,7 +180,8 @@ function ProjectForm({
   onCancel: () => void;
 }) {
   const [techInput, setTechInput] = useState(project.technologies.join(", "));
-  const [imagePreview, setImagePreview] = useState<string | null>(project.image && project.image.startsWith("data:") ? project.image : null);
+  const [imagePreview, setImagePreview] = useState<string | null>(project.image || null);
+  const [uploading, setUploading] = useState(false);
 
   const handleTechChange = (value: string) => {
     setTechInput(value);
@@ -189,31 +191,46 @@ function ProjectForm({
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Check if file is an image
-      if (!file.type.startsWith("image/")) {
-        alert("Please upload an image file");
-        return;
-      }
-      
-      // Check file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB");
-        return;
-      }
+    if (!file) return;
 
+    // Check if file is an image
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Show preview immediately
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setImagePreview(base64String);
-        setProject({
-          ...project,
-          image: base64String,
-        });
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Upload to Firebase Storage
+      const path = getProjectImagePath(project.id, file.name);
+      const downloadURL = await uploadImage(file, path);
+      
+      // Update project with Firebase Storage URL
+      setProject({
+        ...project,
+        image: downloadURL,
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert(error instanceof Error ? error.message : "Failed to upload image. Please try again.");
+      setImagePreview(null);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -335,7 +352,12 @@ function ProjectForm({
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="project-image">Project Preview Image</Label>
           <div className="space-y-2">
-            {imagePreview || (project.image && project.image.startsWith("data:")) ? (
+            {uploading ? (
+              <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                <Loader2 className="h-12 w-12 mx-auto mb-2 text-primary animate-spin" />
+                <p className="text-sm text-muted-foreground">Uploading to Firebase Storage...</p>
+              </div>
+            ) : imagePreview || project.image ? (
               <div className="relative border rounded-lg p-2">
                 <img
                   src={imagePreview || project.image}
@@ -351,6 +373,11 @@ function ProjectForm({
                 >
                   <X className="h-4 w-4" />
                 </Button>
+                {project.image && project.image.startsWith("https://") && (
+                  <Badge className="absolute top-4 left-4" variant="secondary">
+                    Firebase Storage
+                  </Badge>
+                )}
               </div>
             ) : (
               <div className="border-2 border-dashed rounded-lg p-6 text-center">
@@ -365,18 +392,24 @@ function ProjectForm({
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="flex-1"
+                disabled={uploading}
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById("project-image")?.click()}
+                disabled={uploading}
               >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Image
+                {uploading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4 mr-2" />
+                )}
+                {uploading ? "Uploading..." : "Upload Image"}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Upload an image to show in the mockup. If both image and live URL are provided, image will be prioritized.
+              Upload an image (max 5MB). Images are stored in Firebase Storage for better performance.
             </p>
           </div>
         </div>

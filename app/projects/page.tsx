@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ExternalLink, Github, FolderOpen, Smartphone } from "lucide-react";
 import Link from "next/link";
-import { getProjects, type Project, type ProjectCategory } from "@/lib/portfolio-data";
+import { subscribeToProjects, type Project, type ProjectCategory } from "@/lib/firebase-data";
 
 type FilterCategory = "all" | "mobile" | "web" | "data" | "freelance";
 
@@ -20,45 +20,13 @@ export default function Projects() {
     // Mark as client-side rendered
     setIsClient(true);
     
-    // Load projects from shared data source
-    const loadProjects = () => {
-      setProjects(getProjects());
-    };
-    
-    // Load data on mount
-    loadProjects();
-
-    // Listen for CMS updates
-    const handleUpdate = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail?.type === "projects") {
-        loadProjects();
-      }
-    };
-    
-    // Also listen for storage events (works across tabs)
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === "cms_projects" || e.key === "cms_projects_updated" || e.key === "cms_trigger") {
-        loadProjects();
-      }
-    };
-    
-    // Poll for changes as a fallback (check every 500ms)
-    const pollInterval = setInterval(() => {
-      const lastUpdate = localStorage.getItem("cms_projects_updated");
-      if (lastUpdate && lastUpdate !== (window as any).__lastProjectsUpdate) {
-        (window as any).__lastProjectsUpdate = lastUpdate;
-        loadProjects();
-      }
-    }, 500);
-    
-    window.addEventListener("cms-data-updated", handleUpdate);
-    window.addEventListener("storage", handleStorage);
+    // Subscribe to real-time updates from Firestore
+    const unsubscribe = subscribeToProjects((data) => {
+      setProjects(data);
+    });
     
     return () => {
-      window.removeEventListener("cms-data-updated", handleUpdate);
-      window.removeEventListener("storage", handleStorage);
-      clearInterval(pollInterval);
+      unsubscribe();
     };
   }, []);
 

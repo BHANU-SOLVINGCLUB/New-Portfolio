@@ -1,10 +1,31 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, User, FolderOpen, Code } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Home, User, FolderOpen, Code, Database } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { migrateLocalStorageToFirebase } from "@/lib/migrate-to-firebase";
 
 export default function CMSDashboard() {
+  const [migrating, setMigrating] = useState(false);
+
+  const handleMigration = async () => {
+    if (!confirm("This will migrate your localStorage data to Firebase. Continue?")) {
+      return;
+    }
+    setMigrating(true);
+    try {
+      await migrateLocalStorageToFirebase();
+      alert("Migration completed successfully!");
+    } catch (error) {
+      console.error("Migration error:", error);
+      alert("Migration failed. Check console for details.");
+    } finally {
+      setMigrating(false);
+    }
+  };
+
   const sections = [
     {
       href: "/cms/home",
@@ -39,7 +60,7 @@ export default function CMSDashboard() {
         <p className="text-muted-foreground">Manage your portfolio content</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {sections.map((section) => {
           const Icon = section.icon;
           return (
@@ -59,6 +80,27 @@ export default function CMSDashboard() {
           );
         })}
       </div>
+
+      <Card className="border-dashed">
+        <CardHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <Database className="h-5 w-5 text-primary" />
+            <CardTitle>Firebase Migration</CardTitle>
+          </div>
+          <CardDescription>
+            Migrate existing localStorage data to Firebase (one-time operation)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button 
+            onClick={handleMigration} 
+            disabled={migrating}
+            variant="outline"
+          >
+            {migrating ? "Migrating..." : "Migrate to Firebase"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,34 +1,53 @@
 "use client";
 
 import { AboutEditor } from "@/components/cms/AboutEditor";
-import { getAboutContent, defaultAboutContent } from "@/lib/portfolio-data";
+import { getAboutContent, saveAboutContent, defaultAboutContent } from "@/lib/firebase-data";
 import { useState, useEffect } from "react";
 
 export default function CMSAbout() {
   const [aboutContent, setAboutContent] = useState(defaultAboutContent);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setAboutContent(getAboutContent());
+    const loadContent = async () => {
+      try {
+        const data = await getAboutContent();
+        setAboutContent(data);
+      } catch (error) {
+        console.error("Error loading about content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadContent();
   }, []);
 
-  const handleSaveAbout = (content: typeof defaultAboutContent) => {
-    setAboutContent(content);
-    const data = JSON.stringify(content);
-    localStorage.setItem("cms_about", data);
-    localStorage.setItem("cms_about_updated", Date.now().toString());
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent("cms-data-updated", { detail: { type: "about" } }));
-      localStorage.setItem("cms_trigger", Date.now().toString());
-      localStorage.removeItem("cms_trigger");
+  const handleSaveAbout = async (content: typeof defaultAboutContent) => {
+    try {
+      await saveAboutContent(content);
+      setAboutContent(content);
+      alert("About content saved successfully to Firebase! Changes will reflect on portfolio pages.");
+    } catch (error) {
+      console.error("Error saving about content:", error);
+      alert("Error saving about content. Please check your Firebase configuration.");
     }
-    alert("About content saved successfully! Changes will reflect on portfolio pages.");
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <p className="text-muted-foreground">Loading about content...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">About Page Content</h1>
-        <p className="text-muted-foreground">Edit your about page content</p>
+        <p className="text-muted-foreground">Edit your about page content (Firebase)</p>
       </div>
       <AboutEditor content={aboutContent} onSave={handleSaveAbout} />
     </div>
