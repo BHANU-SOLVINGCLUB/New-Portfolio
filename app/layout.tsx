@@ -12,9 +12,15 @@ export const metadata: Metadata = {
   title: "Home | Bhanu Prakash Chintal",
   description: "Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, visualization, and automation, along with strong Flutter and full-stack development skills",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: [
+      { url: "/avatar.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/avatar.svg", type: "image/svg+xml", sizes: "32x32" },
+      { url: "/avatar.svg", type: "image/svg+xml", sizes: "48x48" },
+    ],
+    shortcut: "/avatar.svg",
+    apple: [
+      { url: "/avatar.svg", type: "image/svg+xml", sizes: "180x180" },
+    ],
   },
 };
 

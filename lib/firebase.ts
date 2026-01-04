@@ -25,14 +25,10 @@ if (typeof window !== "undefined") {
     app = getApps()[0];
   }
   
-  // Initialize Firestore with explicit settings
+  // Initialize Firestore
+  // Note: Don't call enableNetwork() here as it can cause race conditions
+  // Firestore will automatically manage network state
   db = getFirestore(app);
-  
-  // Ensure network is enabled (disable offline persistence for now)
-  // This prevents "client is offline" errors
-  enableNetwork(db).catch((error) => {
-    console.warn("Firebase network enable warning:", error);
-  });
   
   storage = getStorage(app);
 }

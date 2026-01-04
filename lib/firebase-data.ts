@@ -35,15 +35,40 @@ const isFirebaseReady = (): boolean => {
   return typeof window !== "undefined" && db !== undefined;
 };
 
-// Helper to ensure network is enabled
+// Helper to ensure network is enabled (with deduplication to prevent race conditions)
+let networkEnablePromise: Promise<void> | null = null;
+
 const ensureNetworkEnabled = async (): Promise<void> => {
-  if (db) {
-    try {
-      await enableNetwork(db);
-    } catch (error) {
-      // Network already enabled or other error, ignore
-    }
+  if (!db) return;
+  
+  // If already enabling, wait for that promise
+  if (networkEnablePromise) {
+    return networkEnablePromise;
   }
+  
+  // Create a new promise for enabling network
+  networkEnablePromise = (async () => {
+    try {
+      // Only enable network if not already enabled
+      // This prevents the internal assertion error from concurrent calls
+      await enableNetwork(db!);
+    } catch (error: any) {
+      // Network already enabled or other error - this is fine
+      // Firestore will manage network state automatically
+      if (error?.code !== "failed-precondition" && 
+          !error?.message?.includes("already enabled")) {
+        // Only log unexpected errors
+        console.warn("Firebase network enable warning:", error);
+      }
+    } finally {
+      // Clear the promise after a short delay to allow reuse
+      setTimeout(() => {
+        networkEnablePromise = null;
+      }, 100);
+    }
+  })();
+  
+  return networkEnablePromise;
 };
 
 // Projects
@@ -104,9 +129,12 @@ export const subscribeToProjects = (
     return () => {};
   }
   
-  ensureNetworkEnabled();
-  const docRef = doc(db, COLLECTIONS.projects, "data");
-  const unsubscribe = onSnapshot(
+  // Set up subscription asynchronously after network is enabled
+  let unsubscribe: (() => void) | null = null;
+  ensureNetworkEnabled().then(() => {
+    if (!db) return;
+    const docRef = doc(db, COLLECTIONS.projects, "data");
+    unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -125,9 +153,18 @@ export const subscribeToProjects = (
       }
       callback(defaultProjects);
     }
-  );
+    );
+  }).catch((error) => {
+    console.error("Error setting up projects subscription:", error);
+    callback(defaultProjects);
+  });
   
-  return unsubscribe;
+  // Return unsubscribe function that handles the async case
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 };
 
 // Home Content
@@ -183,9 +220,12 @@ export const subscribeToHomeContent = (
     return () => {};
   }
   
-  ensureNetworkEnabled();
-  const docRef = doc(db, COLLECTIONS.home, "data");
-  const unsubscribe = onSnapshot(
+  // Set up subscription asynchronously after network is enabled
+  let unsubscribe: (() => void) | null = null;
+  ensureNetworkEnabled().then(() => {
+    if (!db) return;
+    const docRef = doc(db, COLLECTIONS.home, "data");
+    unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -204,9 +244,18 @@ export const subscribeToHomeContent = (
       }
       callback(defaultHomeContent);
     }
-  );
+    );
+  }).catch((error) => {
+    console.error("Error setting up home content subscription:", error);
+    callback(defaultHomeContent);
+  });
   
-  return unsubscribe;
+  // Return unsubscribe function that handles the async case
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 };
 
 // About Content
@@ -262,9 +311,12 @@ export const subscribeToAboutContent = (
     return () => {};
   }
   
-  ensureNetworkEnabled();
-  const docRef = doc(db, COLLECTIONS.about, "data");
-  const unsubscribe = onSnapshot(
+  // Set up subscription asynchronously after network is enabled
+  let unsubscribe: (() => void) | null = null;
+  ensureNetworkEnabled().then(() => {
+    if (!db) return;
+    const docRef = doc(db, COLLECTIONS.about, "data");
+    unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -283,9 +335,18 @@ export const subscribeToAboutContent = (
       }
       callback(defaultAboutContent);
     }
-  );
+    );
+  }).catch((error) => {
+    console.error("Error setting up about content subscription:", error);
+    callback(defaultAboutContent);
+  });
   
-  return unsubscribe;
+  // Return unsubscribe function that handles the async case
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 };
 
 // Skills
@@ -341,9 +402,12 @@ export const subscribeToSkills = (
     return () => {};
   }
   
-  ensureNetworkEnabled();
-  const docRef = doc(db, COLLECTIONS.skills, "data");
-  const unsubscribe = onSnapshot(
+  // Set up subscription asynchronously after network is enabled
+  let unsubscribe: (() => void) | null = null;
+  ensureNetworkEnabled().then(() => {
+    if (!db) return;
+    const docRef = doc(db, COLLECTIONS.skills, "data");
+    unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -362,8 +426,17 @@ export const subscribeToSkills = (
       }
       callback(defaultSkills);
     }
-  );
+    );
+  }).catch((error) => {
+    console.error("Error setting up skills subscription:", error);
+    callback(defaultSkills);
+  });
   
-  return unsubscribe;
+  // Return unsubscribe function that handles the async case
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 };
 
