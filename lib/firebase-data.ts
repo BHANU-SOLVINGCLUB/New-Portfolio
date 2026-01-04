@@ -6,7 +6,6 @@ import {
   setDoc, 
   onSnapshot,
   Timestamp,
-  enableNetwork,
   type Firestore
 } from "firebase/firestore";
 import { db } from "./firebase";
@@ -35,50 +34,14 @@ const isFirebaseReady = (): boolean => {
   return typeof window !== "undefined" && db !== undefined;
 };
 
-// Helper to ensure network is enabled (with deduplication to prevent race conditions)
-let networkEnablePromise: Promise<void> | null = null;
-
-const ensureNetworkEnabled = async (): Promise<void> => {
-  if (!db) return;
-  
-  // If already enabling, wait for that promise
-  if (networkEnablePromise) {
-    return networkEnablePromise;
-  }
-  
-  // Create a new promise for enabling network
-  networkEnablePromise = (async () => {
-    try {
-      // Only enable network if not already enabled
-      // This prevents the internal assertion error from concurrent calls
-      await enableNetwork(db!);
-    } catch (error: any) {
-      // Network already enabled or other error - this is fine
-      // Firestore will manage network state automatically
-      if (error?.code !== "failed-precondition" && 
-          !error?.message?.includes("already enabled")) {
-        // Only log unexpected errors
-        console.warn("Firebase network enable warning:", error);
-      }
-    } finally {
-      // Clear the promise after a short delay to allow reuse
-      setTimeout(() => {
-        networkEnablePromise = null;
-      }, 100);
-    }
-  })();
-  
-  return networkEnablePromise;
-};
+// Note: Firestore manages network state automatically
+// No need to call enableNetwork() - it causes internal assertion errors
 
 // Projects
 export const getProjects = async (): Promise<Project[]> => {
   if (!isFirebaseReady() || !db) return defaultProjects;
   
   try {
-    // Ensure network is enabled before fetching
-    await ensureNetworkEnabled();
-    
     const docRef = doc(db, COLLECTIONS.projects, "data");
     const docSnap = await getDoc(docRef);
     
@@ -129,12 +92,9 @@ export const subscribeToProjects = (
     return () => {};
   }
   
-  // Set up subscription asynchronously after network is enabled
-  let unsubscribe: (() => void) | null = null;
-  ensureNetworkEnabled().then(() => {
-    if (!db) return;
-    const docRef = doc(db, COLLECTIONS.projects, "data");
-    unsubscribe = onSnapshot(
+  // Set up subscription directly - Firestore manages network state automatically
+  const docRef = doc(db, COLLECTIONS.projects, "data");
+  const unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -153,18 +113,9 @@ export const subscribeToProjects = (
       }
       callback(defaultProjects);
     }
-    );
-  }).catch((error) => {
-    console.error("Error setting up projects subscription:", error);
-    callback(defaultProjects);
-  });
+  );
   
-  // Return unsubscribe function that handles the async case
-  return () => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  };
+  return unsubscribe;
 };
 
 // Home Content
@@ -172,7 +123,6 @@ export const getHomeContent = async () => {
   if (!isFirebaseReady() || !db) return defaultHomeContent;
   
   try {
-    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.home, "data");
     const docSnap = await getDoc(docRef);
     
@@ -220,12 +170,9 @@ export const subscribeToHomeContent = (
     return () => {};
   }
   
-  // Set up subscription asynchronously after network is enabled
-  let unsubscribe: (() => void) | null = null;
-  ensureNetworkEnabled().then(() => {
-    if (!db) return;
-    const docRef = doc(db, COLLECTIONS.home, "data");
-    unsubscribe = onSnapshot(
+  // Set up subscription directly - Firestore manages network state automatically
+  const docRef = doc(db, COLLECTIONS.home, "data");
+  const unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -244,18 +191,9 @@ export const subscribeToHomeContent = (
       }
       callback(defaultHomeContent);
     }
-    );
-  }).catch((error) => {
-    console.error("Error setting up home content subscription:", error);
-    callback(defaultHomeContent);
-  });
+  );
   
-  // Return unsubscribe function that handles the async case
-  return () => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  };
+  return unsubscribe;
 };
 
 // About Content
@@ -263,7 +201,6 @@ export const getAboutContent = async () => {
   if (!isFirebaseReady() || !db) return defaultAboutContent;
   
   try {
-    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.about, "data");
     const docSnap = await getDoc(docRef);
     
@@ -311,12 +248,9 @@ export const subscribeToAboutContent = (
     return () => {};
   }
   
-  // Set up subscription asynchronously after network is enabled
-  let unsubscribe: (() => void) | null = null;
-  ensureNetworkEnabled().then(() => {
-    if (!db) return;
-    const docRef = doc(db, COLLECTIONS.about, "data");
-    unsubscribe = onSnapshot(
+  // Set up subscription directly - Firestore manages network state automatically
+  const docRef = doc(db, COLLECTIONS.about, "data");
+  const unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -335,18 +269,9 @@ export const subscribeToAboutContent = (
       }
       callback(defaultAboutContent);
     }
-    );
-  }).catch((error) => {
-    console.error("Error setting up about content subscription:", error);
-    callback(defaultAboutContent);
-  });
+  );
   
-  // Return unsubscribe function that handles the async case
-  return () => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  };
+  return unsubscribe;
 };
 
 // Skills
@@ -354,7 +279,6 @@ export const getSkills = async () => {
   if (!isFirebaseReady() || !db) return defaultSkills;
   
   try {
-    await ensureNetworkEnabled();
     const docRef = doc(db, COLLECTIONS.skills, "data");
     const docSnap = await getDoc(docRef);
     
@@ -402,12 +326,9 @@ export const subscribeToSkills = (
     return () => {};
   }
   
-  // Set up subscription asynchronously after network is enabled
-  let unsubscribe: (() => void) | null = null;
-  ensureNetworkEnabled().then(() => {
-    if (!db) return;
-    const docRef = doc(db, COLLECTIONS.skills, "data");
-    unsubscribe = onSnapshot(
+  // Set up subscription directly - Firestore manages network state automatically
+  const docRef = doc(db, COLLECTIONS.skills, "data");
+  const unsubscribe = onSnapshot(
     docRef,
     (docSnap) => {
       if (docSnap.exists()) {
@@ -426,17 +347,8 @@ export const subscribeToSkills = (
       }
       callback(defaultSkills);
     }
-    );
-  }).catch((error) => {
-    console.error("Error setting up skills subscription:", error);
-    callback(defaultSkills);
-  });
+  );
   
-  // Return unsubscribe function that handles the async case
-  return () => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  };
+  return unsubscribe;
 };
 

@@ -1,6 +1,6 @@
 // Firebase configuration and initialization
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getFirestore, Firestore, enableNetwork, disableNetwork } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
