@@ -6,13 +6,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowRight, Code, Briefcase, Mail, FolderOpen, Users, Award, TrendingUp, Sparkles, ExternalLink, Github } from "lucide-react";
+import { ArrowRight, Code, Briefcase, Mail, FolderOpen, Users, Award, TrendingUp, ExternalLink, Github } from "lucide-react";
+import { getTechLogo } from "@/lib/tech-logos";
 import { subscribeToHomeContent, subscribeToProjects, type Project } from "@/lib/firebase-data";
+import { defaultHomeContent } from "@/lib/firebase-data";
 import { dataPreloader } from "@/lib/data-preloader";
 import { HomeSkeleton } from "@/components/loading/HomeSkeleton";
+import { ProjectCard } from "@/components/ProjectCard";
+import type { HomeStatIcon } from "@/lib/portfolio-data";
+
+const STAT_ICON_MAP: Record<HomeStatIcon, React.ComponentType<{ className?: string }>> = {
+  folder: FolderOpen,
+  "trending-up": TrendingUp,
+  users: Users,
+  award: Award,
+};
 
 export default function Home() {
-  const [homeContent, setHomeContent] = useState<{ name: string; badges: string[]; description: string }>({ name: "", badges: [], description: "" });
+  const [homeContent, setHomeContent] = useState<typeof defaultHomeContent>(defaultHomeContent);
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,36 +72,51 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
-        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+        <div
+          className="relative rounded-[2rem] border border-[#3f3f3f] px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12"
+          style={{
+            background: "linear-gradient(0deg, #141414, #242424)",
+          }}
+        >
+          <div
+            className="pointer-events-none absolute rounded-[2.5rem] -z-10"
+            style={{
+              inset: "-6px",
+              background: "linear-gradient(180deg, #3f3f3f, #212121)",
+            }}
+          />
+
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <Avatar className="h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 ring-2 ring-border">
-            <AvatarImage src="/avatar.svg" alt={homeContent.name} />
-            <AvatarFallback className="text-lg sm:text-xl md:text-2xl">BPC</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex flex-wrap gap-2 mb-4">
-              {homeContent.badges.map((badge, index) => (
-                <Badge key={index}>{badge}</Badge>
-              ))}
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Hi, I&apos;m {homeContent.name}
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6">
-              {homeContent.description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild className="w-full sm:w-auto">
-                <Link href="/projects">
-                  View Projects
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="w-full sm:w-auto">
-                <Link href="/contact">
-                  Get In Touch
-                  <Mail className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <AvatarImage src="/avatar.svg" alt={homeContent.name} />
+              <AvatarFallback className="text-lg sm:text-xl md:text-2xl">BPC</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {homeContent.badges.map((badge, index) => (
+                  <Badge key={index}>{badge}</Badge>
+                ))}
+              </div>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                Hi, I&apos;m {homeContent.name}
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6">
+                {homeContent.description}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button asChild className="w-full sm:w-auto">
+                  <Link href="/projects">
+                    View Projects
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild className="w-full sm:w-auto">
+                  <Link href="/contact">
+                    Get In Touch
+                    <Mail className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -105,7 +131,10 @@ export default function Home() {
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="group hover:border-primary/50 transition-colors">
+          <Card
+            className="group hover:border-primary/50 transition-colors rounded-2xl border-[#3f3f3f]"
+            style={{ background: "linear-gradient(0deg, #141414, #242424)" }}
+          >
             <CardHeader>
               <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                 <Code className="h-6 w-6 text-primary" />
@@ -123,7 +152,10 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:border-primary/50 transition-colors">
+          <Card
+            className="group hover:border-primary/50 transition-colors rounded-2xl border-[#3f3f3f]"
+            style={{ background: "linear-gradient(0deg, #141414, #242424)" }}
+          >
             <CardHeader>
               <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                 <Briefcase className="h-6 w-6 text-primary" />
@@ -141,7 +173,10 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:border-primary/50 transition-colors">
+          <Card
+            className="group hover:border-primary/50 transition-colors rounded-2xl border-[#3f3f3f]"
+            style={{ background: "linear-gradient(0deg, #141414, #242424)" }}
+          >
             <CardHeader>
               <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                 <Mail className="h-6 w-6 text-primary" />
@@ -175,29 +210,9 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8">
           {featuredProjects.map((project) => (
-            <Card key={project.id} className="group hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <CardTitle className="group-hover:text-primary transition-colors">{project.title}</CardTitle>
-                <CardDescription>
-                  {project.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.technologies.slice(0, 3).map((tech, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">{tech}</Badge>
-                  ))}
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/projects#project-${project.id}`}>
-                    View project
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       </section>
@@ -217,99 +232,58 @@ export default function Home() {
           </Button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Code className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Flutter</CardTitle>
-              <CardDescription className="text-xs">Cross-platform app development</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Code className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Python</CardTitle>
-              <CardDescription className="text-xs">Backend and data processing</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Code className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Dart</CardTitle>
-              <CardDescription className="text-xs">Flutter app development</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Code className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Firebase</CardTitle>
-              <CardDescription className="text-xs">Backend-as-a-Service</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Code className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Supabase</CardTitle>
-              <CardDescription className="text-xs">Open source Firebase alternative</CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="group hover:border-primary/50 transition-colors text-center">
-            <CardHeader className="pb-3">
-              <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors">
-                <Sparkles className="h-8 w-8 text-primary" />
-              </div>
-              <CardTitle className="text-base">Figma</CardTitle>
-              <CardDescription className="text-xs">UI/UX design and prototyping</CardDescription>
-            </CardHeader>
-          </Card>
+          {[
+            { name: "Flutter", description: "Cross-platform app development" },
+            { name: "Python", description: "Backend and data processing" },
+            { name: "Dart", description: "Flutter app development" },
+            { name: "Firebase", description: "Backend-as-a-Service" },
+            { name: "Supabase", description: "Open source Firebase alternative" },
+            { name: "Figma", description: "UI/UX design and prototyping" },
+          ].map(({ name, description }) => {
+            const logoUrl = getTechLogo(name);
+            return (
+              <Card
+                key={name}
+                className="group hover:border-primary/50 transition-colors text-center rounded-2xl border-[#3f3f3f]"
+                style={{ background: "linear-gradient(0deg, #141414, #242424)" }}
+              >
+                <CardHeader className="pb-3">
+                  <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/10 transition-colors p-2">
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={name}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <Code className="h-8 w-8 text-primary" />
+                    )}
+                  </div>
+                  <CardTitle className="text-base">{name}</CardTitle>
+                  <CardDescription className="text-xs">{description}</CardDescription>
+                </CardHeader>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
       {/* Quick Stats */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 border-t border-border">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="flex flex-col items-center text-center">
-            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
-              <FolderOpen className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">3+</div>
-            <p className="text-sm text-muted-foreground">Years Experience</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
-              <TrendingUp className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">10+</div>
-            <p className="text-sm text-muted-foreground">Projects Completed</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
-              <Users className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">2</div>
-            <p className="text-sm text-muted-foreground">Companies Worked</p>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
-              <Award className="h-6 w-6 text-primary" />
-            </div>
-            <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">1</div>
-            <p className="text-sm text-muted-foreground">Research Paper</p>
-          </div>
+          {(homeContent.stats && homeContent.stats.length > 0 ? homeContent.stats : defaultHomeContent.stats).map((stat, index) => {
+            const IconComponent = STAT_ICON_MAP[stat.icon as HomeStatIcon] ?? FolderOpen;
+            return (
+              <div key={index} className="flex flex-col items-center text-center">
+                <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
+                  <IconComponent className="h-6 w-6 text-primary" />
+                </div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 

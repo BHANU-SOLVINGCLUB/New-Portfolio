@@ -147,12 +147,56 @@ export const defaultProjects: Project[] = [
     details: "Plattrr is a comprehensive cross-platform application built with TypeScript, React, and Capacitor for mobile deployment. The project features a full-stack architecture with client, server, and mobile components. Provided technical support throughout the development process and successfully managed deployments to both Apple App Store and Google Play Store. The application utilizes Supabase for backend services, Firebase for additional integrations, and Vercel for web hosting. Implemented proper build configurations for iOS and Android platforms, ensuring smooth cross-platform functionality.",
     featured: true
   },
+  {
+    id: 8,
+    title: "rest-express (Plattr)",
+    description: "Plattr is a mobile-first catering and bulk meal ordering application built for the Bangalore market.",
+    technologies: [
+      "React 18",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Supabase (PostgreSQL)",
+      "Capacitor (Android/iOS)",
+      "Node.js",
+      "Express",
+      "Firebase Cloud Messaging",
+      "Razorpay"
+    ],
+    image: "",
+    github: "",
+    live: "",
+    appStore: "https://apps.apple.com/in/app/plattr/id6754812718",
+    playStore: "https://play.google.com/store/apps/details?id=com.caterplanner.app",
+    type: "",
+    period: "",
+    team: "",
+    achievement: null,
+    category: "mobile",
+    details:
+      "What it does:\n- Lets users browse menus (tiffins, snacks, lunch/dinner) and place catering, meal box, snack box, and bulk meal orders.\n- Processes payments (Razorpay; Stripe is referenced in docs/client code).\n- Sends push notifications for order updates and supports notification preferences with deep links (plattr://...).\n\nKey features:\n- Mobile-first React app packaged with Capacitor for Android/iOS.\n- Supabase-backed data persistence and (documented) authentication.\n- Razorpay payment flow with server + Supabase Edge Function support.\n- Push notification system using Firebase Cloud Messaging (device token registration, preferences, deep links).\n- Integrations for Odoo sync (CRM/order/product) and Facebook Conversions API (server-side events).\n\nArchitecture overview:\n- React + Vite client (client/) runs as a web app and is packaged via Capacitor.\n- Supabase (PostgreSQL + Edge Functions) handles data/ops; Express (server/) provides REST endpoints (notifications + Razorpay) in a transitional setup.\n\nNotes:\n- RLS is referenced for database protection; service role key is intended for server-side use only.\n- Theme is forced to light mode (dark mode explicitly disabled in client).",
+    featured: false
+  },
 ];
+
+export type HomeStatIcon = "folder" | "trending-up" | "users" | "award";
+
+export interface HomeStat {
+  value: string;
+  label: string;
+  icon: HomeStatIcon;
+}
 
 export const defaultHomeContent = {
   name: "Bhanu Prakash Chintal",
   badges: ["Data Analyst", "Software Engineer", "Flutter Developer"],
   description: "Data Analyst and Software Engineer with hands-on experience in Python-based data analytics, visualization, and automation, along with strong Flutter and full-stack development skills. I enjoy building scalable applications, extracting insights from data, and solving real-world problems using technology.",
+  stats: [
+    { value: "3+", label: "Years Experience", icon: "folder" },
+    { value: "10+", label: "Projects Completed", icon: "trending-up" },
+    { value: "2", label: "Companies Worked", icon: "users" },
+    { value: "1", label: "Research Paper", icon: "award" },
+  ],
 };
 
 export const defaultAboutContent = {

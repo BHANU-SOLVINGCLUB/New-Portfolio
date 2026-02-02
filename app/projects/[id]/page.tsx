@@ -118,15 +118,28 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
             {/* Visual Section */}
             <div className="flex justify-center md:justify-start order-2 md:order-1">
               {project.category === "mobile" ? (
-                // Mobile Phone Mockup
+                // Mobile Phone Mockup (now shows uploaded image when available)
                 <div className="relative w-full max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]">
                   <div className="absolute inset-0 bg-green-400/20 rounded-full blur-3xl scale-150 pointer-events-none"></div>
                   <div className="relative bg-card border-2 border-border rounded-[2rem] p-2 sm:p-3 shadow-2xl">
-                    <div className="bg-muted rounded-[1.5rem] aspect-[9/19] flex items-center justify-center">
-                      <div className="text-center p-4 sm:p-6">
-                        <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 line-clamp-2">{project.title}</div>
-                        <div className="text-sm sm:text-base text-muted-foreground">Project Preview</div>
-                      </div>
+                    <div className="bg-muted rounded-[1.5rem] aspect-[9/19] overflow-hidden flex items-center justify-center">
+                      {project.image && project.image !== "" && (project.image.startsWith("data:") || project.image.startsWith("https://")) ? (
+                        <img
+                          src={project.image}
+                          alt={`${project.title} Preview`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="text-center p-4 sm:p-6">
+                          <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 line-clamp-2">
+                            {project.title}
+                          </div>
+                          <div className="text-sm sm:text-base text-muted-foreground">
+                            Project Preview
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -299,7 +312,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                       <div className="flex flex-col gap-4 py-4">
                         {project.appStore && (
                           <a
-                            href={project.appStore}
+                            href={project.appStore.trim()}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors group"
@@ -318,7 +331,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                         )}
                         {project.playStore && (
                           <a
-                            href={project.playStore}
+                            href={project.playStore.trim()}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors group"

@@ -1,12 +1,31 @@
 "use client";
 
-import { HomeEditor } from "@/components/cms/HomeEditor";
+import { HomeEditor, type HomeContent } from "@/components/cms/HomeEditor";
 import { getHomeContent, saveHomeContent, defaultHomeContent } from "@/lib/firebase-data";
 import { dataPreloader } from "@/lib/data-preloader";
+import type { HomeStat, HomeStatIcon } from "@/lib/portfolio-data";
 import { useState, useEffect } from "react";
 
+const VALID_ICONS: HomeStatIcon[] = ["folder", "trending-up", "users", "award"];
+
+function normalizeHomeContent(raw: Record<string, unknown>): typeof defaultHomeContent {
+  const stats = (Array.isArray(raw.stats)
+    ? raw.stats.map((s: Record<string, unknown>) => {
+        const iconRaw = s.icon as string;
+        const icon: HomeStatIcon = VALID_ICONS.includes(iconRaw as HomeStatIcon) ? (iconRaw as HomeStatIcon) : "folder";
+        return { value: typeof s.value === "string" ? s.value : "", label: typeof s.label === "string" ? s.label : "", icon };
+      })
+    : defaultHomeContent.stats) as HomeStat[];
+  return {
+    name: typeof raw.name === "string" ? raw.name : defaultHomeContent.name,
+    badges: Array.isArray(raw.badges) ? raw.badges.filter((b): b is string => typeof b === "string") : defaultHomeContent.badges,
+    description: typeof raw.description === "string" ? raw.description : defaultHomeContent.description,
+    stats,
+  };
+}
+
 export default function CMSHome() {
-  const [homeContent, setHomeContent] = useState(defaultHomeContent);
+  const [homeContent, setHomeContent] = useState<typeof defaultHomeContent>(defaultHomeContent);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +37,7 @@ export default function CMSHome() {
         // Try to get preloaded data first
         const preloadedData = dataPreloader.getData();
         if (preloadedData.loaded) {
-          setHomeContent(preloadedData.homeContent);
+          setHomeContent(normalizeHomeContent(preloadedData.homeContent as Record<string, unknown>));
           setLoading(false);
         } else {
           // Wait for preloader or fetch directly
@@ -26,7 +45,7 @@ export default function CMSHome() {
             dataPreloader.preloadAll().then(d => d.homeContent),
             getHomeContent()
           ]);
-          setHomeContent(data);
+          setHomeContent(normalizeHomeContent(data as Record<string, unknown>));
           setLoading(false);
         }
       } catch (error) {
@@ -37,10 +56,11 @@ export default function CMSHome() {
     loadContent();
   }, []);
 
-  const handleSaveHome = async (content: typeof defaultHomeContent) => {
+  const handleSaveHome = async (content: HomeContent) => {
     try {
-      await saveHomeContent(content);
-      setHomeContent(content);
+      const normalized = normalizeHomeContent(content as unknown as Record<string, unknown>);
+      await saveHomeContent(normalized);
+      setHomeContent(normalized);
       alert("Home content saved successfully to Firebase! Changes will reflect on portfolio pages.");
     } catch (error) {
       console.error("Error saving home content:", error);
